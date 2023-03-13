@@ -1,6 +1,6 @@
 package toolrepositories
 import (
-    "mattzero.com.br/domain/tool-model"
+    "github.com/4MattTecnologia/mtz-cellen-domain/tool-model"
     "fmt"
 )
 

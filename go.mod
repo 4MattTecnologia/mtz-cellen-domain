@@ -1,10 +1,11 @@
-module mattzero.com.br/domain
+module github.com/4MattTecnologia/mtz-cellen-domain
 
 go 1.19
 
-replace mattzero.com.br/helpers => ../function_helpers
-
-require mattzero.com.br/helpers v0.0.0-00010101000000-000000000000
+require (
+	github.com/4MattTecnologia/mtz-cellen-helpers v0.0.0-20230313172955-3b904d98c88b
+	github.com/lib/pq v1.10.7
+)
 
 require (
 	cloud.google.com/go/cloudsqlconn v1.1.1 // indirect
@@ -23,7 +24,6 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.12.0 // indirect
 	github.com/jackc/pgx/v4 v4.17.2 // indirect
-	github.com/lib/pq v1.10.7 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect

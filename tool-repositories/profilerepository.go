@@ -1,7 +1,7 @@
 package toolrepositories
 import (
     "fmt"
-    "mattzero.com.br/domain/tool-model"
+    "github.com/4MattTecnologia/mtz-cellen-domain/tool-model"
 )
 type AbsProfileRepository interface {
     GetAll() ([]toolmodel.Profile, error)

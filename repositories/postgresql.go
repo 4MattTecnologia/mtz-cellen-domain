@@ -2,8 +2,8 @@ package repositories
 import (
     "encoding/json"
     "log"
-    helperDb "mattzero.com.br/helpers/database"
-    "mattzero.com.br/domain/model"
+    helperDb "github.com/4MattTecnologia/mtz-cellen-helpers/database"
+    "github.com/4MattTecnologia/mtz-cellen-domain/model"
     _ "github.com/lib/pq"
 )
 

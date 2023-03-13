@@ -1,7 +1,7 @@
 package repositories
 import (
     "testing"
-    "mattzero.com.br/domain/model"
+    "github.com/4MattTecnologia/mtz-cellen-domain/model"
 )
 
 func TestNewDomain(t *testing.T) {
