@@ -32,7 +32,7 @@ func NewOriginInstance(name string, connValues model.ConnectionValues,
     oInstances, err := oInstanceRepo.GetAll()
     if err != nil {
         return model.OriginInstance{}, fmt.Errorf(
-            "Error attempting to query origins in NewOriginInstance function")
+            "Error attempting to query origins in NewOriginInstance function: %v", err)
     }
     // verificar se par nome+nome domínio configuram chave primária
     maxId := 0

@@ -15,7 +15,7 @@ func NewOrigin(name string, connInfo map[string]string,
                repo AbsOriginRepository) (model.Origin, error) {
     origins, err := repo.GetAll()
     if err != nil {
-        return model.Origin{}, fmt.Errorf("Error attempting to query origins in NewOrigin function")
+        return model.Origin{}, fmt.Errorf("Error attempting to query origins in NewOrigin function: %v", err)
     }
     maxId := 0
     for _, v := range origins {

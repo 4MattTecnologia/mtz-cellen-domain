@@ -14,7 +14,7 @@ type AbsDomainRepository interface {
 func NewDomain(name string, repo AbsDomainRepository) (model.Domain, error) {
     domains, err := repo.GetAll()
     if err != nil {
-        return model.Domain{}, fmt.Errorf("Error in GetAll() query")
+        return model.Domain{}, fmt.Errorf("Error in GetAll() query: %v", err)
     }
     maxId := 0
     for _, v := range domains {
