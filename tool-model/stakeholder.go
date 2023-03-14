@@ -4,51 +4,49 @@ import (
 )
 
 type Stakeholder struct {
-    id      int
-    name    string
-    dAgreements map[int]int // maps domainIds to agreementIds
+    id          int
+    name        string
+    domainIds   []int
 }
 
-func NewStakeholder (id int, name string) (Stakeholder, error) {
+func NewStakeholder (id int, name string,
+                     domainIds []int) (Stakeholder, error) {
     if name == "" {
         return Stakeholder{}, errors.New("Invalid empty name for Stakeholder")
     }
-    return Stakeholder{id, name, map[int]int{}}, nil
-}
-
-func  SetAgreementToDomain(stakeholder Stakeholder,
-                         domainId int,
-                         agreementId int) (Stakeholder, error) {
-    _, ok := stakeholder.dAgreements[domainId]
-    if !ok {
-        return stakeholder, errors.New(
-            "Error in AddDomainAgreement: could not find domainId")
-    }
-    newStakeholder := stakeholder
-    newStakeholder.dAgreements[domainId] = agreementId
-    return newStakeholder, nil
+    return Stakeholder{id, name, domainIds}, nil
 }
 
 func RemoveDomain(stakeholder Stakeholder, domainId int) (
         Stakeholder, error) {
-    _, ok := stakeholder.dAgreements[domainId]
-    if !ok {
+    domainIds := make([]int, 0)
+    found := false
+    for _, v := range stakeholder.domainIds {
+        if v != domainId {
+            domainIds = append(domainIds, v)
+        }
+        if v == domainId {
+            found = true
+        }
+    }
+    if !found {
         return stakeholder, errors.New(
             "Error in RemoveDomain: could not find domainId")
     }
-    newStakeholder := stakeholder
-    delete(newStakeholder.dAgreements, domainId)
-    return newStakeholder, nil
+    return Stakeholder{id, name, domainIds}
 }
 
 func AddDomain(stakeholder Stakeholder,
                domainId int) Stakeholder {
-    _, ok := stakeholder.dAgreements[domainId]
-    if ok {
-        return stakeholder
+    for _, v := range stakeholder.domainIds {
+        if v == domainId {
+            return stakeholder, errors.New(
+                "Error in AddDomain: domain already exists")
+        }
     }
     newStakeholder := stakeholder
-    newStakeholder.dAgreements[domainId] = -1
+    newStakeholder.domainIds = append(
+        newStakeholder.domainIds, domainId)
     return newStakeholder
 }
 
@@ -60,11 +58,6 @@ func (s *Stakeholder) GetName() string {
     return s.name
 }
 
-func (s *Stakeholder) GetAgreementFromDomain(domainId int) (int, error) {
-    val, ok := s.dAgreements[domainId]
-    if !ok {
-        return 0, errors.New("Error in GetAgreementFromDomain: "+
-                             "domainId not found")
-    }
-    return val, nil
+func (s *Stakeholder) GetDomainIds() []int {
+    return s.domainIds
 }

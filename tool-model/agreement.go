@@ -34,6 +34,10 @@ func (a *Agreement) GetName() string {
     return a.name
 }
 
+func (a *Agreement) GetNumMtzUsers() int {
+    return a.numMtzUsers
+}
+
 func (a *Agreement) GetNumMonitoredUsers() int {
     return a.numMonitoredUsers
 }
