@@ -342,7 +342,7 @@ func (p *PSQLOriginInstanceRepo) GetAll() ([]model.OriginInstance, error) {
 }
 func (p *PSQLOriginInstanceRepo) Get(id int) (model.OriginInstance, error) {
     var (
-        auxId   int
+        auxId           int
         name            string
         originId        int
         domainId        int
@@ -371,33 +371,38 @@ func (p *PSQLOriginInstanceRepo) Get(id int) (model.OriginInstance, error) {
                                            domainId, connectionVals)
     return oInstance, nil
 }
-//
-//func (p *PSQLOriginRepo) Insert(origin model.Origin) error {
-//    var (
-//        id              int
-//        name            string
-//        cInfoRaw        []byte
-//        connectionInfo  map[string]string
-//    )
-//    id = origin.GetId()
-//    name = origin.GetName()
-//    connectionInfo = origin.GetConnectionInfo()
-//    cInfoRaw, err := json.Marshal(connectionInfo)
-//    if err != nil {
-//        log.Printf("Error in PSQLOriginRepo Insert(): %v", err)
-//        return err
-//    }
-//    _, err := p.DBConn.Exec(
-//        "INSERT INTO origins "+
-//        "(origin_id, origin_name, connection_info) "+
-//        "VALUES ($1, $2, $3)", id, name, cInfoRaw)
-//    return err
-//}
-//
-//func (p *PSQLDomainRepo) Remove(id int) error {
-//    _, err := p.DBConn.Exec(
-//        "DELETE FROM origins "+
-//        "WHERE origin_id = $1", id)
-//    return err
-//}
-//
+
+func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
+    var (
+        id          int
+        name        string
+        originId    int
+        domainId    int
+        cValsRaw    []byte
+        cVals       model.ConnectionValues
+    )
+    id          = oInstance.GetId()
+    name        = oInstance.GetName()
+    originId    = oInstance.GetOriginId()
+    domainId    = oInstance.GetDomainId()
+    cVals       = oInstance.GetConnectionValues()
+    cValsRaw, err := json.Marshal(cVals)
+    if err != nil {
+        log.Printf("Error in PSQLOriginInstanceRepo Insert(): %v", err)
+        return err
+    }
+    _, err = p.DBConn.Exec(
+        "INSERT INTO origin_instances "+
+        "(origin_instance_id, origin_instance_name, " +
+        "origin_id, domain_id, connection_values) "+
+        "VALUES ($1, $2, $3, $4, $5)",
+        id, name, originId, domainId, cValsRaw)
+    return err
+}
+
+func (p *PSQLOriginInstanceRepo) Remove(id int) error {
+    _, err := p.DBConn.Exec(
+        "DELETE FROM origin_instances "+
+        "WHERE origin_instance_id = $1", id)
+    return err
+}
