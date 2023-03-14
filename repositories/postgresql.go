@@ -20,6 +20,24 @@ type PSQLDomainRepo struct {
     helperDb.PostgreSQLDatabase
 }
 
+func NewPSQLDomainRepo(dbName string,
+                       dbHost string,
+                       dbPort string,
+                       dbUser string,
+                       dbPwd string) (*PSQLDomainRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLDomainRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
+}
+
 func NewCloudPSQLDomainRepo(dbName string,
                        dbHost string,
                        dbUser string,
@@ -109,6 +127,24 @@ func (p *PSQLDomainRepo) Remove(id int) error {
 // ORIGIN ----------------------------------------------------------------------
 type PSQLOriginRepo struct {
     helperDb.PostgreSQLDatabase
+}
+
+func NewPSQLOriginRepo(dbName string,
+                       dbHost string,
+                       dbPort string,
+                       dbUser string,
+                       dbPwd string) (*PSQLOriginRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLOriginRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
 }
 
 func NewCloudPSQLOriginRepo(dbName string,
@@ -222,6 +258,25 @@ func (p *PSQLOriginRepo) Remove(id int) error {
 // OINSTANCE -------------------------------------------------------------------
 type PSQLOriginInstanceRepo struct {
     helperDb.PostgreSQLDatabase
+}
+
+func NewPSQLOriginInstanceRepo(dbName string,
+                               dbHost string,
+                               dbPort string,
+                               dbUser string,
+                               dbPwd string) (
+                               *PSQLOriginInstanceRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLOriginInstanceRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
 }
 
 func NewCloudPSQLOriginInstanceRepo(dbName string,
