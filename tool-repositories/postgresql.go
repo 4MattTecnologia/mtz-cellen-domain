@@ -380,6 +380,60 @@ func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
     }
     return data, nil
 }
+
+func (p *PSQLMtzUserRepo) GetByName(name string) (toolmodel.MtzUser, error) {
+    var (
+        id              int
+        auxName         string
+        password        string
+        domainId        int
+        stakeholderId   int
+        profileId       int
+        startDateRaw    time.Time
+        startDate       string
+        endDateRaw      time.Time
+        endDate         string
+        publicKey       []byte
+        privateKey      []byte
+        mtzUser         toolmodel.MtzUser
+    )
+    err := p.DBConn.QueryRow(
+        "SELECT user_id, user_name, " +
+        "password, " +
+        "domain_id, stakeholder_id, "+
+        "profile_id, "+
+        "start_date, end_date, "+
+        "private_key, public_key "+
+        "FROM mtz_users "+
+        "WHERE user_id = $1", id).Scan(&id,
+                                       &auxName,
+                                       &password,
+                                       &domainId,
+                                       &stakeholderId,
+                                       &profileId,
+                                       &startDateRaw,
+                                       &endDateRaw,
+                                       &publicKey,
+                                       &privateKey);
+    if err != nil {
+        log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
+        return toolmodel.MtzUser{}, err
+    }
+    startDate = startDateRaw.Format("2006-01-02")
+    endDate = endDateRaw.Format("2006-01-02")
+    mtzUser, _ = toolmodel.NewMtzUser(id,
+                                      auxName,
+                                      password,
+                                      domainId,
+                                      stakeholderId,
+                                      profileId,
+                                      startDate,
+                                      endDate,
+                                      publicKey,
+                                      privateKey);
+    return mtzUser, nil
+}
+
 func (p *PSQLMtzUserRepo) Get(id int) (toolmodel.MtzUser, error) {
     var (
         auxId           int

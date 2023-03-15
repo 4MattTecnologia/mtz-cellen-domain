@@ -7,6 +7,7 @@ import (
 
 type AbsMtzUserRepository interface {
     GetAll() ([]toolmodel.MtzUser, error)
+    GetByName(name string) (toolmodel.MtzUser, error)
     Get(id int) (toolmodel.MtzUser, error)
     Insert(toolmodel.MtzUser) error
     Remove(id int) error
@@ -48,13 +49,23 @@ func (f *FakeMtzUserRepository) GetAll() ([]toolmodel.MtzUser, error) {
     return f.mtzUsers, nil
 }
 
+func (f *FakeMtzUserRepository) GetByName(name string) (
+        toolmodel.MtzUser, error) {
+    for _, v := range f.mtzUsers {
+        if v.GetName() == name {
+            return v, nil
+        }
+    }
+    return toolmodel.MtzUser{}, fmt.Errorf("No mtzuser for name %v", name)
+}
+
 func (f *FakeMtzUserRepository) Get(id int) (toolmodel.MtzUser, error) {
     for _, v := range f.mtzUsers {
         if v.GetId() == id {
             return v, nil
         }
     }
-    return toolmodel.MtzUser{}, fmt.Errorf("No stakeholder for id %v", id)
+    return toolmodel.MtzUser{}, fmt.Errorf("No mtzuser for id %v", id)
 }
 
 func (f *FakeMtzUserRepository) Insert(
