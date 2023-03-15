@@ -7,7 +7,8 @@ import (
 
 type AbsMtzUserRepository interface {
     GetAll() ([]toolmodel.MtzUser, error)
-    GetByName(name string) (toolmodel.MtzUser, error)
+    GetByName(name string, password string, domainId int) (
+        toolmodel.MtzUser, error)
     Get(id int) (toolmodel.MtzUser, error)
     Insert(toolmodel.MtzUser) error
     Remove(id int) error

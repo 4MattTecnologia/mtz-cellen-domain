@@ -381,12 +381,14 @@ func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
     return data, nil
 }
 
-func (p *PSQLMtzUserRepo) GetByName(name string) (toolmodel.MtzUser, error) {
+func (p *PSQLMtzUserRepo) GetByName(
+        name string, password string,
+        domainId int) (toolmodel.MtzUser, error) {
     var (
         id              int
         auxName         string
-        password        string
-        domainId        int
+        auxPassword     string
+        auxDomainId     int
         stakeholderId   int
         profileId       int
         startDateRaw    time.Time
@@ -405,10 +407,13 @@ func (p *PSQLMtzUserRepo) GetByName(name string) (toolmodel.MtzUser, error) {
         "start_date, end_date, "+
         "private_key, public_key "+
         "FROM mtz_users "+
-        "WHERE user_id = $1", id).Scan(&id,
+        "WHERE user_name = $1 "+
+        "AND password = $2 "+
+        "AND domain_id = $3",
+        name, password, domainId).Scan(&id,
                                        &auxName,
-                                       &password,
-                                       &domainId,
+                                       &auxPassword,
+                                       &auxDomainId,
                                        &stakeholderId,
                                        &profileId,
                                        &startDateRaw,
@@ -423,8 +428,8 @@ func (p *PSQLMtzUserRepo) GetByName(name string) (toolmodel.MtzUser, error) {
     endDate = endDateRaw.Format("2006-01-02")
     mtzUser, _ = toolmodel.NewMtzUser(id,
                                       auxName,
-                                      password,
-                                      domainId,
+                                      auxPassword,
+                                      auxDomainId,
                                       stakeholderId,
                                       profileId,
                                       startDate,
