@@ -64,6 +64,9 @@ func (m *MtzUser) GetStartDate() string {
 func (m *MtzUser) GetEndDate() string {
     return m.endDate
 }
+func (m *MtzUser) GetPrivateKey() []byte {
+    return m.privateKey
+}
 func (m *MtzUser) GetPublicKey() []byte {
     return m.publicKey
 }
