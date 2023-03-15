@@ -17,7 +17,7 @@ func NewProfile(name string, security map[string]bool,
     }
     profiles, err := repo.GetAll()
     if err != nil {
-        return toolmodel.Profile{}, fmt.Errorf("Error in GetAll() query")
+        return toolmodel.Profile{}, fmt.Errorf("Error in GetAll() query: %v", err)
     }
     maxId := 0
     for _, v := range profiles {
@@ -25,12 +25,8 @@ func NewProfile(name string, security map[string]bool,
             maxId = v.GetId() + 1
         }
     }
-    newProfile, err := toolmodel.NewProfile(maxId, name,
-                                            security)
-    if err != nil {
-        return toolmodel.Profile{}, nil
-    }
-    return newProfile, nil
+    return toolmodel.NewProfile(maxId, name,
+                                security)
 }
 
 type FakeProfileRepository struct {

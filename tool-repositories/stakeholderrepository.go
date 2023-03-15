@@ -7,13 +7,12 @@ import (
 type AbsStakeholderRepository interface {
     GetAll() ([]toolmodel.Stakeholder, error)
     Get(id int) (toolmodel.Stakeholder, error)
-    Update(id int, stakeholder toolmodel.Stakeholder) error
     Insert(stakeholder toolmodel.Stakeholder) error
     Remove(id int) error
 }
 
 
-func NewStakeholder(name string,
+func NewStakeholder(name string, domainIds []int,
                     repo AbsStakeholderRepository) (
                     toolmodel.Stakeholder, error) {
     if name == "" {
@@ -29,7 +28,7 @@ func NewStakeholder(name string,
             maxId = v.GetId() + 1
         }
     }
-    return toolmodel.NewStakeholder(maxId, name)
+    return toolmodel.NewStakeholder(maxId, name, domainIds)
 }
 
 type FakeStakeholderRepository struct {
