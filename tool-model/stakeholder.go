@@ -33,11 +33,13 @@ func RemoveDomain(stakeholder Stakeholder, domainId int) (
         return stakeholder, errors.New(
             "Error in RemoveDomain: could not find domainId")
     }
-    return Stakeholder{id, name, domainIds}
+    newStakeholder := stakeholder
+    newStakeholder.domainIds = domainIds
+    return newStakeholder, nil
 }
 
 func AddDomain(stakeholder Stakeholder,
-               domainId int) Stakeholder {
+               domainId int) (Stakeholder, error) {
     for _, v := range stakeholder.domainIds {
         if v == domainId {
             return stakeholder, errors.New(
@@ -47,7 +49,7 @@ func AddDomain(stakeholder Stakeholder,
     newStakeholder := stakeholder
     newStakeholder.domainIds = append(
         newStakeholder.domainIds, domainId)
-    return newStakeholder
+    return newStakeholder, nil
 }
 
 func (s *Stakeholder) GetId() int {

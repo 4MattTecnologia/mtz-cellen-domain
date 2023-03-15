@@ -15,10 +15,10 @@ func NewProfile(id int, name string,
     if name == "" {
         return Profile{}, fmt.Errorf("Invalid empty name for Profile")
     }
-    if len(security) == 0 {
-        return Profile{}, fmt.Errorf(
-            "Invalid empty security options for Profile")
-    }
+//    if len(security) == 0 {
+//        return Profile{}, fmt.Errorf(
+//            "Invalid empty security options for Profile")
+//    }
     return Profile{id, name, security}, nil
 }
 
