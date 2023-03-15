@@ -4,7 +4,8 @@ import (
     "log"
     helperDb "github.com/4MattTecnologia/mtz-cellen-helpers/database"
     "github.com/4MattTecnologia/mtz-cellen-domain/tool-model"
-    _ "github.com/lib/pq"
+    "github.com/lib/pq"
+    "time"
 )
 
 // PSQL repositores for all entities in the tool modelling.
@@ -18,6 +19,25 @@ import (
 // AGREEMENT -------------------------------------------------------------------
 type PSQLAgreementRepo struct {
     helperDb.PostgreSQLDatabase
+}
+
+func NewPSQLAgreementRepo(dbName string,
+                          dbHost string,
+                          dbPort string,
+                          dbUser string,
+                          dbPwd string) (
+                          *PSQLAgreementRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLAgreementRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
 }
 
 func NewCloudPSQLAgreementRepo(dbName string,
@@ -102,7 +122,7 @@ func (p *PSQLAgreementRepo) Get(id int) (toolmodel.Agreement, error) {
         log.Printf("Error in PSQLAgreementRepo Get(): %v", err)
         return toolmodel.Agreement{}, err
     }
-    agreement, _ = model.NewAgreement(auxId,
+    agreement, _ = toolmodel.NewAgreement(auxId,
                                       name,
                                       numMtzUsers,
                                       numMonitoredUsers,
@@ -143,6 +163,25 @@ func (p *PSQLAgreementRepo) Remove(id int) error {
 // MODULE ----------------------------------------------------------------------
 type PSQLModuleRepo struct {
     helperDb.PostgreSQLDatabase
+}
+
+func NewPSQLModuleRepo(dbName string,
+                       dbHost string,
+                       dbPort string,
+                       dbUser string,
+                       dbPwd string) (
+                       *PSQLModuleRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLModuleRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
 }
 
 func NewCloudPSQLModuleRepo(dbName string,
@@ -208,7 +247,7 @@ func (p *PSQLModuleRepo) Get(id int) (toolmodel.Module, error) {
         log.Printf("Error in PSQLModuleRepo Get(): %v", err)
         return toolmodel.Module{}, err
     }
-    module, _ = model.NewModule(auxId, name);
+    module, _ = toolmodel.NewModule(auxId, name);
     return module, nil
 }
 
@@ -237,6 +276,25 @@ func (p *PSQLModuleRepo) Remove(id int) error {
 // MTZUSER ---------------------------------------------------------------------
 type PSQLMtzUserRepo struct {
     helperDb.PostgreSQLDatabase
+}
+
+func NewPSQLMtzUserRepo(dbName string,
+                        dbHost string,
+                        dbPort string,
+                        dbUser string,
+                        dbPwd string) (
+                        *PSQLMtzUserRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLMtzUserRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
 }
 
 func NewCloudPSQLMtzUserRepo(dbName string,
@@ -268,7 +326,9 @@ func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
         domainId        int
         stakeholderId   int
         profileId       int
+        startDateRaw    time.Time
         startDate       string
+        endDateRaw      time.Time
         endDate         string
         publicKey       []byte
         privateKey      []byte
@@ -296,14 +356,16 @@ func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
                             &domainId,
                             &stakeholderId,
                             &profileId,
-                            &startDate,
-                            &endDate,
+                            &startDateRaw,
+                            &endDateRaw,
                             &publicKey,
                             &privateKey);
         err != nil {
             log.Printf("Error in PSQLMtzUserRepo GetAll(): %v", err)
             return []toolmodel.MtzUser{}, err
         }
+        startDate = startDateRaw.Format("2006-01-02")
+        endDate = endDateRaw.Format("2006-01-02")
         mtzUser, _ = toolmodel.NewMtzUser(id,
                                           name,
                                           password,
@@ -326,7 +388,9 @@ func (p *PSQLMtzUserRepo) Get(id int) (toolmodel.MtzUser, error) {
         domainId        int
         stakeholderId   int
         profileId       int
+        startDateRaw    time.Time
         startDate       string
+        endDateRaw      time.Time
         endDate         string
         publicKey       []byte
         privateKey      []byte
@@ -342,18 +406,20 @@ func (p *PSQLMtzUserRepo) Get(id int) (toolmodel.MtzUser, error) {
         "FROM mtz_users "+
         "WHERE user_id = $1", id).Scan(&auxId,
                                        &name,
-                                       password,
-                                       domainId,
-                                       stakeholderId,
-                                       profileId,
-                                       startDate,
-                                       endDate,
-                                       publicKey,
-                                       privateKey);
+                                       &password,
+                                       &domainId,
+                                       &stakeholderId,
+                                       &profileId,
+                                       &startDateRaw,
+                                       &endDateRaw,
+                                       &publicKey,
+                                       &privateKey);
     if err != nil {
         log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
         return toolmodel.MtzUser{}, err
     }
+    startDate = startDateRaw.Format("2006-01-02")
+    endDate = endDateRaw.Format("2006-01-02")
     mtzUser, _ = toolmodel.NewMtzUser(auxId,
                                       name,
                                       password,
@@ -390,7 +456,15 @@ func (p *PSQLMtzUserRepo) Insert(mtzUser toolmodel.MtzUser) error {
     endDate         = mtzUser.GetEndDate()
     publicKey       = mtzUser.GetPublicKey()
     privateKey      = mtzUser.GetPrivateKey()
-    _, err := p.DBConn.Exec(
+    startDateRaw, err := time.Parse("2006-01-02", startDate)
+    if err != nil {
+        return err
+    }
+    endDateRaw, err := time.Parse("2006-01-02", endDate)
+    if err != nil {
+        return err
+    }
+    _, err = p.DBConn.Exec(
         "INSERT INTO mtz_users " +
         "(user_id, user_name, " +
         "password, " +
@@ -403,7 +477,7 @@ func (p *PSQLMtzUserRepo) Insert(mtzUser toolmodel.MtzUser) error {
         password,
         domainId, stakeholderId,
         profileId,
-        startDate, endDate,
+        startDateRaw, endDateRaw,
         publicKey, privateKey)
     return err
 }
@@ -418,6 +492,25 @@ func (p *PSQLMtzUserRepo) Remove(id int) error {
 // PROFILE ---------------------------------------------------------------------
 type PSQLProfileRepo struct {
     helperDb.PostgreSQLDatabase
+}
+
+func NewPSQLProfileRepo(dbName string,
+                        dbHost string,
+                        dbPort string,
+                        dbUser string,
+                        dbPwd string) (
+                        *PSQLProfileRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLProfileRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
 }
 
 func NewCloudPSQLProfileRepo(dbName string,
@@ -451,7 +544,7 @@ func (p *PSQLProfileRepo) GetAll() ([]toolmodel.Profile, error) {
     )
     data := make([]toolmodel.Profile, 0)
     rows, err := p.DBConn.Query(
-        "SELECT profile_id, profile_name, security" +
+        "SELECT profile_id, profile_name, security " +
         "FROM profiles")
 
     if err != nil {
@@ -464,7 +557,8 @@ func (p *PSQLProfileRepo) GetAll() ([]toolmodel.Profile, error) {
                             &name,
                             &rawSecurity);
         err != nil {
-            log.Printf("Error in PSQLProfileRepo GetAll(): %v", err)
+            log.Printf("Error iterating through PSQLProfileRepo "+
+                "GetAll(): %v", err)
             return []toolmodel.Profile{}, err
         }
         json.Unmarshal(rawSecurity, &security)
@@ -482,7 +576,7 @@ func (p *PSQLProfileRepo) Get(id int) (toolmodel.Profile, error) {
         profile  toolmodel.Profile
     )
     err := p.DBConn.QueryRow(
-        "SELECT profile_id, profile_name, security" +
+        "SELECT profile_id, profile_name, security " +
         "FROM profiles "+
         "WHERE profile_id = $1", id).Scan(&auxId, &name, &rawSecurity);
     if err != nil {
@@ -490,7 +584,7 @@ func (p *PSQLProfileRepo) Get(id int) (toolmodel.Profile, error) {
         return toolmodel.Profile{}, err
     }
     json.Unmarshal(rawSecurity, security)
-    profile, _ = model.NewProfile(auxId, name, security);
+    profile, _ = toolmodel.NewProfile(auxId, name, security);
     return profile, nil
 }
 
@@ -504,7 +598,7 @@ func (p *PSQLProfileRepo) Insert(profile toolmodel.Profile) error {
     id          = profile.GetId()
     name        = profile.GetName()
     security    = profile.GetSecurity()
-    rawSecurity, _ := json.Marshal(security)
+    rawSecurity, _ = json.Marshal(security)
     _, err := p.DBConn.Exec(
         "INSERT INTO profiles "+
         "(profile_id, profile_name, security) "+
@@ -523,6 +617,25 @@ func (p *PSQLProfileRepo) Remove(id int) error {
 // STAKEHOLDER -----------------------------------------------------------------
 type PSQLStakeholderRepo struct {
     helperDb.PostgreSQLDatabase
+}
+
+func NewPSQLStakeholderRepo(dbName string,
+                            dbHost string,
+                            dbPort string,
+                            dbUser string,
+                            dbPwd string) (
+                            *PSQLStakeholderRepo, error) {
+    baseDb := helperDb.PostgreSQLDatabase{}
+    repo := PSQLStakeholderRepo{
+        PostgreSQLDatabase: baseDb,
+    }
+    repoPtr := &repo
+    err := repoPtr.Connect(dbName,
+                           dbHost,
+                           dbPort,
+                           dbUser,
+                           dbPwd)
+    return repoPtr, err
 }
 
 func NewCloudPSQLStakeholderRepo(dbName string,
@@ -566,7 +679,7 @@ func (p *PSQLStakeholderRepo) GetAll() ([]toolmodel.Stakeholder, error) {
     for rows.Next() {
         if err := rows.Scan(&id,
                             &name,
-                            &domainIds);
+                            pq.Array(&domainIds));
         err != nil {
             log.Printf("Error in PSQLStakeholderRepo GetAll(): %v", err)
             return []toolmodel.Stakeholder{}, err
@@ -586,12 +699,13 @@ func (p *PSQLStakeholderRepo) Get(id int) (toolmodel.Stakeholder, error) {
     err := p.DBConn.QueryRow(
         "SELECT stakeholder_id, stakeholder_name, domain_ids " +
         "FROM stakeholders "+
-        "WHERE stakeholder_id = $1", id).Scan(&auxId, &name, &domainIds);
+        "WHERE stakeholder_id = $1", id).Scan(
+            &auxId, &name, pq.Array(&domainIds));
     if err != nil {
         log.Printf("Error in PSQLStakeholderRepo Get(): %v", err)
         return toolmodel.Stakeholder{}, err
     }
-    stakeholder, _ = model.NewStakeholder(auxId, name, domainIds);
+    stakeholder, _ = toolmodel.NewStakeholder(auxId, name, domainIds);
     return stakeholder, nil
 }
 
@@ -608,7 +722,7 @@ func (p *PSQLStakeholderRepo) Insert(stakeholder toolmodel.Stakeholder) error {
         "INSERT INTO stakeholders "+
         "(stakeholder_id, stakeholder_name, domain_ids) "+
         "VALUES ($1, $2, $3)",
-        id, name, domainIds)
+        id, name, pq.Array(domainIds))
     return err
 }
 
