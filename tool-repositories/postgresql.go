@@ -341,7 +341,7 @@ func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
         "domain_id, stakeholder_id, "+
         "profile_id, "+
         "start_date, end_date, "+
-        "private_key, public_key "+
+        "public_key, private_key "+
         "FROM mtz_users")
 
     if err != nil {
@@ -405,7 +405,7 @@ func (p *PSQLMtzUserRepo) GetByName(
         "domain_id, stakeholder_id, "+
         "profile_id, "+
         "start_date, end_date, "+
-        "private_key, public_key "+
+        "public_key, private_key "+
         "FROM mtz_users "+
         "WHERE user_name = $1 "+
         "AND password = $2 "+
@@ -418,8 +418,8 @@ func (p *PSQLMtzUserRepo) GetByName(
                                        &profileId,
                                        &startDateRaw,
                                        &endDateRaw,
-                                       &privateKey,
-                                       &publicKey);
+                                       &publicKey,
+                                       &privateKey);
     if err != nil {
         log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
         return toolmodel.MtzUser{}, err
@@ -461,7 +461,7 @@ func (p *PSQLMtzUserRepo) Get(id int) (toolmodel.MtzUser, error) {
         "domain_id, stakeholder_id, "+
         "profile_id, "+
         "start_date, end_date, "+
-        "private_key, public_key "+
+        "public_key, private_key "+
         "FROM mtz_users "+
         "WHERE user_id = $1", id).Scan(&auxId,
                                        &name,
