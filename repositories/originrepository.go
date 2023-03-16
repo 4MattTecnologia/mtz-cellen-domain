@@ -5,8 +5,7 @@ import (
 )
 
 type AbsOriginRepository interface {
-    GetAll() ([]model.Origin, error)
-    Get(id int) (model.Origin, error)
+    Get(filters ...map[string]interface{}) ([]model.Origin, error)
     Insert(origin model.Origin) error
     Remove(id int) error
 }
@@ -31,17 +30,11 @@ type FakeOriginRepository struct {
     origins []model.Origin
 }
 
-func (f *FakeOriginRepository) GetAll() ([]model.Origin, error) {
+func (f *FakeOriginRepository) Get(
+        filters ...map[string]interface{}) ([]model.Origin, error) {
     return f.origins, nil
 }
-func (f *FakeOriginRepository) Get(id int) (model.Origin, error) {
-    for _, v := range f.origins {
-        if v.GetId() == id {
-            return v, nil
-        }
-    }
-    return model.Origin{}, fmt.Errorf("No domain found for id %v", id)
-}
+
 func (f *FakeOriginRepository) Insert(o model.Origin) error {
     f.origins = append(f.origins, o)
     return nil

@@ -16,6 +16,20 @@ import (
 //  - REPORT
 //  - ETL_DATA
 
+func parseFilters(filters map[string]interface{}) (string, []interface{}) {
+    counter := 1
+    whereClause := "WHERE "
+    params := make([]interface{}, 0)
+    for k, v := range(filters) {
+        whereClause = whereClause + k + "= $" +
+                      strconv.Itoa(counter) + " "
+        counter += 1
+        params = append(params, v)
+    }
+    return whereClause, params
+}
+
+
 // DOMAIN ----------------------------------------------------------------------
 type PSQLDomainRepo struct {
     helperDb.PostgreSQLDatabase
@@ -59,16 +73,25 @@ func NewCloudPSQLDomainRepo(dbName string,
     return repoPtr, err
 }
 
-func (p *PSQLDomainRepo) GetAll() ([]model.Domain, error) {
+func (p *PSQLDomainRepo) Get(
+        filters ...map[string]interface{}) ([]model.Domain, error) {
     var (
         id      int
         name    string
         domain  model.Domain
+
+        query           string = "SELECT domain_id, domain_name, "+
+                                 "FROM domains "
+        whereClause     string = ""
+        params          []interface{}
     )
+
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
+
     data := make([]model.Domain, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT domain_id, domain_name " +
-        "FROM domains ")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
         log.Printf("Error in PSQLDomainRepo GetAll(): %v", err)
@@ -86,23 +109,24 @@ func (p *PSQLDomainRepo) GetAll() ([]model.Domain, error) {
     }
     return data, nil
 }
-func (p *PSQLDomainRepo) Get(id int) (model.Domain, error) {
-    var (
-        auxId   int
-        name    string
-        domain  model.Domain
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT domain_id, domain_name "+
-        "FROM domains "+
-        "WHERE domain_id = $1", id).Scan(&auxId, &name)
-    if err != nil {
-        log.Printf("Error in PSQLDomainRepo Get(): %v", err)
-        return model.Domain{}, err
-    }
-    domain, _ = model.NewDomain(auxId, name)
-    return domain, nil
-}
+
+//func (p *PSQLDomainRepo) Get(id int) (model.Domain, error) {
+//    var (
+//        auxId   int
+//        name    string
+//        domain  model.Domain
+//    )
+//    err := p.DBConn.QueryRow(
+//        "SELECT domain_id, domain_name "+
+//        "FROM domains "+
+//        "WHERE domain_id = $1", id).Scan(&auxId, &name)
+//    if err != nil {
+//        log.Printf("Error in PSQLDomainRepo Get(): %v", err)
+//        return model.Domain{}, err
+//    }
+//    domain, _ = model.NewDomain(auxId, name)
+//    return domain, nil
+//}
 
 func (p *PSQLDomainRepo) Insert(domain model.Domain) error {
     var (
@@ -168,18 +192,28 @@ func NewCloudPSQLOriginRepo(dbName string,
     return repoPtr, err
 }
 
-func (p *PSQLOriginRepo) GetAll() ([]model.Origin, error) {
+func (p *PSQLOriginRepo) Get(
+        filters ...map[string]interface{}) ([]model.Origin, error) {
     var (
         id              int
         name            string
         cInfoRaw        []byte
         connectionInfo  map[string]string
         origin  model.Origin
+
+        query           string = "SELECT origin_id, origin_name, "+
+                                 "connection_info "+
+                                 "FROM domains "
+        whereClause     string = ""
+        params          []interface{}
     )
+
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
+
     data := make([]model.Origin, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT origin_id, origin_name, connection_info " +
-        "FROM origins ")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
         log.Printf("Error in PSQLOriginRepo GetAll(): %v", err)
@@ -202,30 +236,30 @@ func (p *PSQLOriginRepo) GetAll() ([]model.Origin, error) {
     }
     return data, nil
 }
-func (p *PSQLOriginRepo) Get(id int) (model.Origin, error) {
-    var (
-        auxId   int
-        name    string
-        cInfoRaw        []byte
-        connectionInfo  map[string]string
-        origin  model.Origin
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT origin_id, origin_name, connection_info "+
-        "FROM origins "+
-        "WHERE origin_id = $1", id).Scan(&auxId, &name, &cInfoRaw)
-    if err != nil {
-        log.Printf("Error in PSQLOriginRepo Get(): %v", err)
-        return model.Origin{}, err
-    }
-    err = json.Unmarshal(cInfoRaw, &connectionInfo)
-    if err != nil {
-        log.Printf("Error in PSQLOriginRepo GetAll(): %v", err)
-        return model.Origin{}, err
-    }
-    origin, _ = model.NewOrigin(auxId, name, connectionInfo)
-    return origin, nil
-}
+//func (p *PSQLOriginRepo) Get(id int) (model.Origin, error) {
+//    var (
+//        auxId   int
+//        name    string
+//        cInfoRaw        []byte
+//        connectionInfo  map[string]string
+//        origin  model.Origin
+//    )
+//    err := p.DBConn.QueryRow(
+//        "SELECT origin_id, origin_name, connection_info "+
+//        "FROM origins "+
+//        "WHERE origin_id = $1", id).Scan(&auxId, &name, &cInfoRaw)
+//    if err != nil {
+//        log.Printf("Error in PSQLOriginRepo Get(): %v", err)
+//        return model.Origin{}, err
+//    }
+//    err = json.Unmarshal(cInfoRaw, &connectionInfo)
+//    if err != nil {
+//        log.Printf("Error in PSQLOriginRepo GetAll(): %v", err)
+//        return model.Origin{}, err
+//    }
+//    origin, _ = model.NewOrigin(auxId, name, connectionInfo)
+//    return origin, nil
+//}
 
 func (p *PSQLOriginRepo) Insert(origin model.Origin) error {
     var (
@@ -301,20 +335,7 @@ func NewCloudPSQLOriginInstanceRepo(dbName string,
     return repoPtr, err
 }
 
-func parseFilters(filters map[string]interface{}) (string, []interface{}) {
-    counter := 1
-    whereClause := "WHERE "
-    params := make([]interface{}, 0)
-    for k, v := range(filters) {
-        whereClause = whereClause + k + "= $" +
-                      strconv.Itoa(counter) + " "
-        counter += 1
-        params = append(params, v)
-    }
-    return whereClause, params
-}
-
-func (p *PSQLOriginInstanceRepo) GetAll(
+func (p *PSQLOriginInstanceRepo) Get(
         filters ...map[string]interface{}) ([]model.OriginInstance, error) {
     var (
         id              int
@@ -339,12 +360,6 @@ func (p *PSQLOriginInstanceRepo) GetAll(
     }
 
     data := make([]model.OriginInstance, 0)
-//    rows, err := p.DBConn.Query(
-//        "SELECT origin_instance_id, "+
-//        "origin_instance_name, "+
-//        "origin_id, domain_id, " +
-//        "connection_values " +
-//        "FROM origin_instances ")
     rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
@@ -369,37 +384,38 @@ func (p *PSQLOriginInstanceRepo) GetAll(
     }
     return data, nil
 }
-func (p *PSQLOriginInstanceRepo) Get(id int) (model.OriginInstance, error) {
-    var (
-        auxId           int
-        name            string
-        originId        int
-        domainId        int
-        cValsRaw        []byte
-        connectionVals  model.ConnectionValues
-        oInstance       model.OriginInstance
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT origin_instance_id, "+
-        "origin_instance_name, "+
-        "origin_id, domain_id, " +
-        "connection_values " +
-        "FROM origin_instances "+
-        "WHERE origin_instance_id = $1", id).Scan(
-        &auxId, &name, &originId, &domainId, &cValsRaw)
-    if err != nil {
-        log.Printf("Error in PSQLOriginRepo Get(): %v", err)
-        return model.OriginInstance{}, err
-    }
-    err = json.Unmarshal(cValsRaw, &connectionVals)
-    if err != nil {
-        log.Printf("Error in PSQLOriginRepo GetAll(): %v", err)
-        return model.OriginInstance{}, err
-    }
-    oInstance, _ = model.NewOriginInstance(auxId, name, originId,
-                                           domainId, connectionVals)
-    return oInstance, nil
-}
+
+//func (p *PSQLOriginInstanceRepo) Get(id int) (model.OriginInstance, error) {
+//    var (
+//        auxId           int
+//        name            string
+//        originId        int
+//        domainId        int
+//        cValsRaw        []byte
+//        connectionVals  model.ConnectionValues
+//        oInstance       model.OriginInstance
+//    )
+//    err := p.DBConn.QueryRow(
+//        "SELECT origin_instance_id, "+
+//        "origin_instance_name, "+
+//        "origin_id, domain_id, " +
+//        "connection_values " +
+//        "FROM origin_instances "+
+//        "WHERE origin_instance_id = $1", id).Scan(
+//        &auxId, &name, &originId, &domainId, &cValsRaw)
+//    if err != nil {
+//        log.Printf("Error in PSQLOriginRepo Get(): %v", err)
+//        return model.OriginInstance{}, err
+//    }
+//    err = json.Unmarshal(cValsRaw, &connectionVals)
+//    if err != nil {
+//        log.Printf("Error in PSQLOriginRepo GetAll(): %v", err)
+//        return model.OriginInstance{}, err
+//    }
+//    oInstance, _ = model.NewOriginInstance(auxId, name, originId,
+//                                           domainId, connectionVals)
+//    return oInstance, nil
+//}
 
 func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
     var (
