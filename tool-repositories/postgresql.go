@@ -418,8 +418,8 @@ func (p *PSQLMtzUserRepo) GetByName(
                                        &profileId,
                                        &startDateRaw,
                                        &endDateRaw,
-                                       &publicKey,
-                                       &privateKey);
+                                       &privateKey,
+                                       &publicKey);
     if err != nil {
         log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
         return toolmodel.MtzUser{}, err
