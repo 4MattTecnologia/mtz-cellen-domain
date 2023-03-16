@@ -5,7 +5,7 @@ import (
 )
 
 type AbsOriginInstanceRepository interface {
-    GetAll() ([]model.OriginInstance, error)
+    GetAll(filters ...map[string]interface{}) ([]model.OriginInstance, error)
     Get(id int) (model.OriginInstance, error)
     Insert(oInstance model.OriginInstance) error
     Remove(id int) error
@@ -50,7 +50,7 @@ type FakeOriginInstanceRepository struct {
     oInstances []model.OriginInstance
 }
 
-func (f *FakeOriginInstanceRepository) GetAll() ([]model.OriginInstance, error) {
+func (f *FakeOriginInstanceRepository) GetAll(filters ...map[string]interface{}) ([]model.OriginInstance, error) {
     return f.oInstances, nil
 }
 func (f *FakeOriginInstanceRepository) Get(id int) (model.OriginInstance, error) {

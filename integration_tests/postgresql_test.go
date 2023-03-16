@@ -145,6 +145,14 @@ func TestModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLOriginRepository failed: " +
             "expected array of 1 element after removal")
     }
+    filters := map[string]interface{}{
+        "origin_id": 1,
+    }
+    gotAllOInstancesWFilter, err := oInstancePsql.GetAll(filters)
+    if len(gotAllOInstancesWFilter) != 1 {
+        t.Fatalf("TestPSQLOriginRepository failed: " +
+            "expected array of 1 element after removal")
+    }
 }
 
 func TestToolModelPSQLRepositories(t *testing.T) {

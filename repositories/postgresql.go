@@ -1,6 +1,7 @@
 package repositories
 import (
     "encoding/json"
+    "strconv"
     "log"
     helperDb "github.com/4MattTecnologia/mtz-cellen-helpers/database"
     "github.com/4MattTecnologia/mtz-cellen-domain/model"
@@ -300,7 +301,21 @@ func NewCloudPSQLOriginInstanceRepo(dbName string,
     return repoPtr, err
 }
 
-func (p *PSQLOriginInstanceRepo) GetAll() ([]model.OriginInstance, error) {
+func parseFilters(filters map[string]interface{}) (string, []interface{}) {
+    counter := 1
+    whereClause := "WHERE "
+    params := make([]interface{}, 0)
+    for k, v := range(filters) {
+        whereClause = whereClause + k + "= $" +
+                      strconv.Itoa(counter) + " "
+        counter += 1
+        params = append(params, v)
+    }
+    return whereClause, params
+}
+
+func (p *PSQLOriginInstanceRepo) GetAll(
+        filters ...map[string]interface{}) ([]model.OriginInstance, error) {
     var (
         id              int
         name            string
@@ -309,14 +324,28 @@ func (p *PSQLOriginInstanceRepo) GetAll() ([]model.OriginInstance, error) {
         cValsRaw        []byte
         connectionVals  model.ConnectionValues
         oInstance       model.OriginInstance
+
+        query           string = "SELECT origin_instance_id, "+
+                                 "origin_instance_name, "+
+                                 "origin_id, domain_id, " +
+                                 "connection_values " +
+                                 "FROM origin_instances "
+        whereClause     string = ""
+        params          []interface{}
     )
+
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
+
     data := make([]model.OriginInstance, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT origin_instance_id, "+
-        "origin_instance_name, "+
-        "origin_id, domain_id, " +
-        "connection_values " +
-        "FROM origin_instances ")
+//    rows, err := p.DBConn.Query(
+//        "SELECT origin_instance_id, "+
+//        "origin_instance_name, "+
+//        "origin_id, domain_id, " +
+//        "connection_values " +
+//        "FROM origin_instances ")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
         log.Printf("Error in PSQLOriginRepo GetAll(): %v", err)
