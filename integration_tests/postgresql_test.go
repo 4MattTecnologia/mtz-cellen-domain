@@ -41,8 +41,11 @@ func TestModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLDomainRepository failed: " +
             "expected id higher than 0 for second element")
     }
-    gotDomain, _ := domainPsql.Get(1)
-    if gotDomain.GetId() != 1 {
+    filters := map[string]interface{}{
+        "domain_id": 1,
+    }
+    gotDomain, _ := domainPsql.Get(filters)
+    if gotDomain[0].GetId() != 1 {
         t.Fatalf("TestPSQLDomainRepository failed: " +
             "expected to fetch element with id = 1")
     }
@@ -50,7 +53,7 @@ func TestModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLDomainRepository failed: %v", err)
     }
-    gotAllDomains, err := domainPsql.GetAll()
+    gotAllDomains, err := domainPsql.Get()
     if len(gotAllDomains) != 1 {
         t.Fatalf("TestPSQLDomainRepository failed: " +
             "expected array of 1 element after removal")
@@ -85,8 +88,11 @@ func TestModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLOriginRepository failed: " +
             "expected id higher than 0 for second element")
     }
-    gotOrigin, _ := originPsql.Get(1)
-    if gotOrigin.GetId() != 1 {
+    filters = map[string]interface{}{
+        "origin_id": 1,
+    }
+    gotOrigin, _ := originPsql.Get(filters)
+    if gotOrigin[0].GetId() != 1 {
         t.Fatalf("TestPSQLOriginRepository failed: " +
             "expected to fetch element with id = 1")
     }
@@ -94,7 +100,7 @@ func TestModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLOriginRepository failed: %v", err)
     }
-    gotAllOrigins, err := originPsql.GetAll()
+    gotAllOrigins, err := originPsql.Get()
     if len(gotAllOrigins) != 1 {
         t.Fatalf("TestPSQLOriginRepository failed: " +
             "expected array of 1 element after removal")
@@ -131,8 +137,11 @@ func TestModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLOriginRepository failed: " +
             "expected id higher than 0 for second element")
     }
-    gotOInstance, _ := oInstancePsql.Get(1)
-    if gotOInstance.GetId() != 1 {
+    filters = map[string]interface{}{
+        "origin_instance_id": 1,
+    }
+    gotOInstance, _ := oInstancePsql.Get(filters)
+    if gotOInstance[0].GetId() != 1 {
         t.Fatalf("TestPSQLOriginRepository failed: " +
             "expected to fetch element with id = 1")
     }
@@ -140,16 +149,8 @@ func TestModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLOriginRepository failed: %v", err)
     }
-    gotAllOInstances, err := oInstancePsql.GetAll()
+    gotAllOInstances, err := oInstancePsql.Get()
     if len(gotAllOInstances) != 1 {
-        t.Fatalf("TestPSQLOriginRepository failed: " +
-            "expected array of 1 element after removal")
-    }
-    filters := map[string]interface{}{
-        "origin_id": 1,
-    }
-    gotAllOInstancesWFilter, err := oInstancePsql.GetAll(filters)
-    if len(gotAllOInstancesWFilter) != 1 {
         t.Fatalf("TestPSQLOriginRepository failed: " +
             "expected array of 1 element after removal")
     }

@@ -12,7 +12,7 @@ type AbsOriginRepository interface {
 
 func NewOrigin(name string, connInfo map[string]string,
                repo AbsOriginRepository) (model.Origin, error) {
-    origins, err := repo.GetAll()
+    origins, err := repo.Get()
     if err != nil {
         return model.Origin{}, fmt.Errorf("Error attempting to query origins in NewOrigin function: %v", err)
     }

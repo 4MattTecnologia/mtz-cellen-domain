@@ -28,7 +28,7 @@ func NewOriginInstance(name string, connValues model.ConnectionValues,
 //            "Error querying for origin type while creating origin instance")
 //    }
 
-    oInstances, err := oInstanceRepo.GetAll()
+    oInstances, err := oInstanceRepo.Get()
     if err != nil {
         return model.OriginInstance{}, fmt.Errorf(
             "Error attempting to query origins in NewOriginInstance function: %v", err)
