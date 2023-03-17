@@ -16,6 +16,19 @@ import (
 //  - PROFILE
 //  - STAKEHOLDER
 
+func parseFilters(filters map[string]interface{}) (string, []interface{}) {
+    counter := 1
+    whereClause := "WHERE "
+    params := make([]interface{}, 0)
+    for k, v := range(filters) {
+        whereClause = whereClause + k + "= $" +
+                      strconv.Itoa(counter) + " "
+        counter += 1
+        params = append(params, v)
+    }
+    return whereClause, params
+}
+
 // AGREEMENT -------------------------------------------------------------------
 type PSQLAgreementRepo struct {
     helperDb.PostgreSQLDatabase
@@ -318,7 +331,8 @@ func NewCloudPSQLMtzUserRepo(dbName string,
     return repoPtr, err
 }
 
-func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
+func (p *PSQLMtzUserRepo) Get(
+        filters ...map[string]interface{}) ([]toolmodel.MtzUser, error) {
     var (
         id              int
         name            string
@@ -333,16 +347,22 @@ func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
         publicKey       []byte
         privateKey      []byte
         mtzUser         toolmodel.MtzUser
+
+        query           string = "SELECT user_id, user_name, " +
+                                 "password, " +
+                                 "domain_id, stakeholder_id, "+
+                                 "profile_id, "+
+                                 "start_date, end_date, "+
+                                 "public_key, private_key "+
+                                 "FROM mtz_users "
+        whereClause     string = ""
+        params          []interface{}
     )
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
     data := make([]toolmodel.MtzUser, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT user_id, user_name, " +
-        "password, " +
-        "domain_id, stakeholder_id, "+
-        "profile_id, "+
-        "start_date, end_date, "+
-        "public_key, private_key "+
-        "FROM mtz_users")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
         log.Printf("Error in PSQLMtzUserRepo GetAll(): %v", err)
@@ -379,117 +399,6 @@ func (p *PSQLMtzUserRepo) GetAll() ([]toolmodel.MtzUser, error) {
         data = append(data, mtzUser)
     }
     return data, nil
-}
-
-func (p *PSQLMtzUserRepo) GetByName(
-        name string, password string,
-        domainId int) (toolmodel.MtzUser, error) {
-    var (
-        id              int
-        auxName         string
-        auxPassword     string
-        auxDomainId     int
-        stakeholderId   int
-        profileId       int
-        startDateRaw    time.Time
-        startDate       string
-        endDateRaw      time.Time
-        endDate         string
-        publicKey       []byte
-        privateKey      []byte
-        mtzUser         toolmodel.MtzUser
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT user_id, user_name, " +
-        "password, " +
-        "domain_id, stakeholder_id, "+
-        "profile_id, "+
-        "start_date, end_date, "+
-        "public_key, private_key "+
-        "FROM mtz_users "+
-        "WHERE user_name = $1 "+
-        "AND password = $2 "+
-        "AND domain_id = $3",
-        name, password, domainId).Scan(&id,
-                                       &auxName,
-                                       &auxPassword,
-                                       &auxDomainId,
-                                       &stakeholderId,
-                                       &profileId,
-                                       &startDateRaw,
-                                       &endDateRaw,
-                                       &publicKey,
-                                       &privateKey);
-    if err != nil {
-        log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
-        return toolmodel.MtzUser{}, err
-    }
-    startDate = startDateRaw.Format("2006-01-02")
-    endDate = endDateRaw.Format("2006-01-02")
-    mtzUser, _ = toolmodel.NewMtzUser(id,
-                                      auxName,
-                                      auxPassword,
-                                      auxDomainId,
-                                      stakeholderId,
-                                      profileId,
-                                      startDate,
-                                      endDate,
-                                      publicKey,
-                                      privateKey);
-    return mtzUser, nil
-}
-
-func (p *PSQLMtzUserRepo) Get(id int) (toolmodel.MtzUser, error) {
-    var (
-        auxId           int
-        name            string
-        password        string
-        domainId        int
-        stakeholderId   int
-        profileId       int
-        startDateRaw    time.Time
-        startDate       string
-        endDateRaw      time.Time
-        endDate         string
-        publicKey       []byte
-        privateKey      []byte
-        mtzUser         toolmodel.MtzUser
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT user_id, user_name, " +
-        "password, " +
-        "domain_id, stakeholder_id, "+
-        "profile_id, "+
-        "start_date, end_date, "+
-        "public_key, private_key "+
-        "FROM mtz_users "+
-        "WHERE user_id = $1", id).Scan(&auxId,
-                                       &name,
-                                       &password,
-                                       &domainId,
-                                       &stakeholderId,
-                                       &profileId,
-                                       &startDateRaw,
-                                       &endDateRaw,
-                                       &publicKey,
-                                       &privateKey);
-    if err != nil {
-        log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
-        return toolmodel.MtzUser{}, err
-    }
-    startDate = startDateRaw.Format("2006-01-02")
-    endDate = endDateRaw.Format("2006-01-02")
-    mtzUser, _ = toolmodel.NewMtzUser(auxId,
-                                      name,
-                                      password,
-                                      domainId,
-                                      stakeholderId,
-                                      profileId,
-                                      startDate,
-                                      endDate,
-                                      publicKey,
-                                      privateKey);
-    return mtzUser, nil
 }
 
 func (p *PSQLMtzUserRepo) Insert(mtzUser toolmodel.MtzUser) error {
