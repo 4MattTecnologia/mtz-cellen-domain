@@ -57,17 +57,11 @@ func NewPSQLDomainRepo(dbName string,
 }
 
 func NewCloudPSQLDomainRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLDomainRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLDomainRepo {
     repo := PSQLDomainRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                             dbHost,
-                             dbUser,
-                             dbPwd,
-                             instanceName,
-                             credentialsJSON)
     return repoPtr, err
 }
 
@@ -171,17 +165,11 @@ func NewPSQLOriginRepo(dbName string,
 }
 
 func NewCloudPSQLOriginRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLOriginRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLOriginRepo {
     repo := PSQLOriginRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                             dbHost,
-                             dbUser,
-                             dbPwd,
-                             instanceName,
-                             credentialsJSON)
     return repoPtr, err
 }
 
@@ -308,17 +296,11 @@ func NewPSQLOriginInstanceRepo(dbName string,
 }
 
 func NewCloudPSQLOriginInstanceRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLOriginInstanceRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLOriginInstanceRepo {
     repo := PSQLOriginInstanceRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                             dbHost,
-                             dbUser,
-                             dbPwd,
-                             instanceName,
-                             credentialsJSON)
     return repoPtr, err
 }
 

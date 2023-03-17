@@ -58,18 +58,12 @@ func NewPSQLAgreementRepo(dbName string,
 }
 
 func NewCloudPSQLAgreementRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLAgreementRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLAgreementRepo {
     repo := PSQLAgreementRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                             dbHost,
-                             dbUser,
-                             dbPwd,
-                             instanceName,
-                             credentialsJSON)
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLAgreementRepo) GetAll() ([]toolmodel.Agreement, error) {
@@ -196,17 +190,11 @@ func NewPSQLModuleRepo(dbName string,
 }
 
 func NewCloudPSQLModuleRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLModuleRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLModuleRepo {
     repo := PSQLModuleRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                                dbHost,
-                                dbUser,
-                                dbPwd,
-                                instanceName,
-                                credentialsJSON)
     return repoPtr, err
 }
 
@@ -303,17 +291,11 @@ func NewPSQLMtzUserRepo(dbName string,
 }
 
 func NewCloudPSQLMtzUserRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLMtzUserRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLMtzUserRepo {
     repo := PSQLMtzUserRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                                dbHost,
-                                dbUser,
-                                dbPwd,
-                                instanceName,
-                                credentialsJSON)
     return repoPtr, err
 }
 
@@ -468,17 +450,11 @@ func NewPSQLProfileRepo(dbName string,
 }
 
 func NewCloudPSQLProfileRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLProfileRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLProfileRepo {
     repo := PSQLProfileRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                                dbHost,
-                                dbUser,
-                                dbPwd,
-                                instanceName,
-                                credentialsJSON)
     return repoPtr, err
 }
 
@@ -587,17 +563,11 @@ func NewPSQLStakeholderRepo(dbName string,
 }
 
 func NewCloudPSQLStakeholderRepo(
-        baseDb helperDb.PostgreSQLDatabase) (*PSQLStakeholderRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) *PSQLStakeholderRepo {
     repo := PSQLStakeholderRepo{
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    err := repoPtr.ConnectCloud(dbName,
-                                dbHost,
-                                dbUser,
-                                dbPwd,
-                                instanceName,
-                                credentialsJSON)
     return repoPtr, err
 }
 
