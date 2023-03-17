@@ -195,7 +195,7 @@ func NewCloudPSQLModuleRepo(
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLModuleRepo) GetAll() ([]toolmodel.Module, error) {
@@ -296,7 +296,7 @@ func NewCloudPSQLMtzUserRepo(
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLMtzUserRepo) Get(
@@ -455,7 +455,7 @@ func NewCloudPSQLProfileRepo(
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLProfileRepo) GetAll() ([]toolmodel.Profile, error) {
@@ -568,7 +568,7 @@ func NewCloudPSQLStakeholderRepo(
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLStakeholderRepo) GetAll() ([]toolmodel.Stakeholder, error) {

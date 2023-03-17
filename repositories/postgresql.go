@@ -62,7 +62,7 @@ func NewCloudPSQLDomainRepo(
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLDomainRepo) Get(
@@ -170,7 +170,7 @@ func NewCloudPSQLOriginRepo(
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLOriginRepo) Get(
@@ -301,7 +301,7 @@ func NewCloudPSQLOriginInstanceRepo(
         PostgreSQLDatabase: baseDb,
     }
     repoPtr := &repo
-    return repoPtr, err
+    return repoPtr
 }
 
 func (p *PSQLOriginInstanceRepo) Get(
