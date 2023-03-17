@@ -57,14 +57,8 @@ func NewPSQLAgreementRepo(dbName string,
     return repoPtr, err
 }
 
-func NewCloudPSQLAgreementRepo(dbName string,
-                               dbHost string,
-                               dbUser string,
-                               dbPwd string,
-                               instanceName string,
-                               credentialsJSON []byte) (
-                               *PSQLAgreementRepo, error) {
-    baseDb := helperDb.PostgreSQLDatabase{}
+func NewCloudPSQLAgreementRepo(
+        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLAgreementRepo, error) {
     repo := PSQLAgreementRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -201,14 +195,8 @@ func NewPSQLModuleRepo(dbName string,
     return repoPtr, err
 }
 
-func NewCloudPSQLModuleRepo(dbName string,
-                            dbHost string,
-                            dbUser string,
-                            dbPwd string,
-                            instanceName string,
-                            credentialsJSON []byte) (
-                            *PSQLModuleRepo, error) {
-    baseDb := helperDb.PostgreSQLDatabase{}
+func NewCloudPSQLModuleRepo(
+        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLModuleRepo, error) {
     repo := PSQLModuleRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -314,14 +302,8 @@ func NewPSQLMtzUserRepo(dbName string,
     return repoPtr, err
 }
 
-func NewCloudPSQLMtzUserRepo(dbName string,
-                            dbHost string,
-                            dbUser string,
-                            dbPwd string,
-                            instanceName string,
-                            credentialsJSON []byte) (
-                            *PSQLMtzUserRepo, error) {
-    baseDb := helperDb.PostgreSQLDatabase{}
+func NewCloudPSQLMtzUserRepo(
+        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLMtzUserRepo, error) {
     repo := PSQLMtzUserRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -485,14 +467,8 @@ func NewPSQLProfileRepo(dbName string,
     return repoPtr, err
 }
 
-func NewCloudPSQLProfileRepo(dbName string,
-                             dbHost string,
-                             dbUser string,
-                             dbPwd string,
-                             instanceName string,
-                             credentialsJSON []byte) (
-                             *PSQLProfileRepo, error) {
-    baseDb := helperDb.PostgreSQLDatabase{}
+func NewCloudPSQLProfileRepo(
+        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLProfileRepo, error) {
     repo := PSQLProfileRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -610,14 +586,8 @@ func NewPSQLStakeholderRepo(dbName string,
     return repoPtr, err
 }
 
-func NewCloudPSQLStakeholderRepo(dbName string,
-                            dbHost string,
-                            dbUser string,
-                            dbPwd string,
-                            instanceName string,
-                            credentialsJSON []byte) (
-                            *PSQLStakeholderRepo, error) {
-    baseDb := helperDb.PostgreSQLDatabase{}
+func NewCloudPSQLStakeholderRepo(
+        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLStakeholderRepo, error) {
     repo := PSQLStakeholderRepo{
         PostgreSQLDatabase: baseDb,
     }
