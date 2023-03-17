@@ -218,7 +218,12 @@ func TestToolModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLMtzUserRepository failed: %v", err)
     }
-    _ , err = mtzUserPsql.GetByName("first", "pwd", 1)
+    filters := map[string]interface{}{
+        "user_name": "first",
+        "password": "pwd",
+        "domain_id": 1,
+    }
+    _ , err = mtzUserPsql.Get(filters)
     if err != nil {
         t.Fatalf("TestPSQLMtzUserRepository failed: %v", err)
     }
@@ -240,8 +245,11 @@ func TestToolModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLMtzUserRepository failed: " +
             "expected id higher than 0 for second element")
     }
-    gotMtzUser, _ := mtzUserPsql.Get(1)
-    if gotMtzUser.GetId() != 1 {
+    filters = map[string]interface{}{
+        "user_id": 1,
+    }
+    gotMtzUser, _ := mtzUserPsql.Get(filters)
+    if gotMtzUser[0].GetId() != 1 {
         t.Fatalf("TestPSQLMtzUserRepository failed: " +
             "expected to fetch element with id = 1")
     }
@@ -249,7 +257,7 @@ func TestToolModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLMtzUserRepository failed: %v", err)
     }
-    gotAllMtzUsers, err := mtzUserPsql.GetAll()
+    gotAllMtzUsers, err := mtzUserPsql.Get()
     if len(gotAllMtzUsers) != 1 {
         t.Fatalf("TestPSQLMtzUserRepository failed: " +
             "expected array of 1 element after removal")

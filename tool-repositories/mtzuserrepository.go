@@ -1,7 +1,6 @@
 package toolrepositories
 import (
     "github.com/4MattTecnologia/mtz-cellen-domain/tool-model"
-    "fmt"
     "errors"
 )
 
@@ -22,7 +21,7 @@ func NewMtzUser(name string,
         return toolmodel.MtzUser{}, errors.New(
             "Invalid empty name for mtzUser")
     }
-    mtzUsers, err := repo.GetAll()
+    mtzUsers, err := repo.Get()
     if err != nil {
         return toolmodel.MtzUser{}, errors.New("Error in GetAll() query")
     }

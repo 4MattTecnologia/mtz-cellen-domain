@@ -1,6 +1,7 @@
 package toolrepositories
 import (
     "encoding/json"
+    "strconv"
     "log"
     helperDb "github.com/4MattTecnologia/mtz-cellen-helpers/database"
     "github.com/4MattTecnologia/mtz-cellen-domain/tool-model"
@@ -21,6 +22,9 @@ func parseFilters(filters map[string]interface{}) (string, []interface{}) {
     whereClause := "WHERE "
     params := make([]interface{}, 0)
     for k, v := range(filters) {
+        if counter > 1 {
+            whereClause += "AND "
+        }
         whereClause = whereClause + k + "= $" +
                       strconv.Itoa(counter) + " "
         counter += 1
