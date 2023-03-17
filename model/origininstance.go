@@ -1,6 +1,7 @@
 package model
 import (
     "fmt"
+    "encoding/json"
 )
 
 type ConnectionValues map[string]interface{}
@@ -14,6 +15,23 @@ type OriginInstance struct {
     connectionValues    ConnectionValues
     // Optional:
 //    executionSettings   ExecutionSettings
+}
+
+func (o *OriginInstance) MarshalJSON() ([]byte, error) {
+    mirror := &struct{
+        Id          int                 `json:"id"`
+        Name        string              `json:"name"`
+        OriginId    int                 `json:"origin_id"`
+        DomainId    int                 `json:"domain_id"`
+        ConnVals    ConnectionValues    `json:"connection_values"`
+    }{
+        Id:         o.id,
+        Name:       o.name,
+        OriginId:   o.originId,
+        DomainId:   o.domainId,
+        ConnVals:   o.connectionValues,
+    }
+    return json.Marshal(mirror)
 }
 
 func (o *OriginInstance) GetId() int {
