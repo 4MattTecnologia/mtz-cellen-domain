@@ -57,7 +57,7 @@ func NewPSQLDomainRepo(dbName string,
 }
 
 func NewCloudPSQLDomainRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLDomainRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLDomainRepo, error) {
     repo := PSQLDomainRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -171,7 +171,7 @@ func NewPSQLOriginRepo(dbName string,
 }
 
 func NewCloudPSQLOriginRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLOriginRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLOriginRepo, error) {
     repo := PSQLOriginRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -308,7 +308,7 @@ func NewPSQLOriginInstanceRepo(dbName string,
 }
 
 func NewCloudPSQLOriginInstanceRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLOriginInstanceRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLOriginInstanceRepo, error) {
     repo := PSQLOriginInstanceRepo{
         PostgreSQLDatabase: baseDb,
     }

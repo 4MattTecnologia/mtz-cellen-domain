@@ -58,7 +58,7 @@ func NewPSQLAgreementRepo(dbName string,
 }
 
 func NewCloudPSQLAgreementRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLAgreementRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLAgreementRepo, error) {
     repo := PSQLAgreementRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -196,7 +196,7 @@ func NewPSQLModuleRepo(dbName string,
 }
 
 func NewCloudPSQLModuleRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLModuleRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLModuleRepo, error) {
     repo := PSQLModuleRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -303,7 +303,7 @@ func NewPSQLMtzUserRepo(dbName string,
 }
 
 func NewCloudPSQLMtzUserRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLMtzUserRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLMtzUserRepo, error) {
     repo := PSQLMtzUserRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -468,7 +468,7 @@ func NewPSQLProfileRepo(dbName string,
 }
 
 func NewCloudPSQLProfileRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLProfileRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLProfileRepo, error) {
     repo := PSQLProfileRepo{
         PostgreSQLDatabase: baseDb,
     }
@@ -587,7 +587,7 @@ func NewPSQLStakeholderRepo(dbName string,
 }
 
 func NewCloudPSQLStakeholderRepo(
-        baseDb helperDb.PostgreSQLDatabase{}) (*PSQLStakeholderRepo, error) {
+        baseDb helperDb.PostgreSQLDatabase) (*PSQLStakeholderRepo, error) {
     repo := PSQLStakeholderRepo{
         PostgreSQLDatabase: baseDb,
     }
