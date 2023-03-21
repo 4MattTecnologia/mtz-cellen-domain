@@ -4,7 +4,7 @@ import (
     "github.com/4MattTecnologia/mtz-cellen-domain/tool-model"
 )
 type AbsProfileRepository interface {
-    GetAll() ([]toolmodel.Profile, error)
+    Get(filters ...map[string]interface{}) ([]toolmodel.Profile, error)
     Get(id int) (toolmodel.Profile, error)
     Insert(profile toolmodel.Profile) error
     Remove(id int) error
@@ -33,17 +33,9 @@ type FakeProfileRepository struct {
     profiles []toolmodel.Profile
 }
 
-func (f *FakeProfileRepository) GetAll() ([]toolmodel.Profile, error) {
+func (f *FakeProfileRepository) Get(
+        filters ...map[string]interface{}) ([]toolmodel.Profile, error) {
     return f.profiles, nil
-}
-
-func (f *FakeProfileRepository) Get(id int) (toolmodel.Profile, error) {
-    for _, v := range f.profiles {
-        if v.GetId() == id {
-            return v, nil
-        }
-    }
-    return toolmodel.Profile{}, fmt.Errorf("No stakeholder for id %v", id)
 }
 
 func (f *FakeProfileRepository) Insert(

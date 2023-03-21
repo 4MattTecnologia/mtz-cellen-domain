@@ -4,8 +4,7 @@ import (
     "github.com/4MattTecnologia/mtz-cellen-domain/tool-model"
 )
 type AbsAgreementRepository interface {
-    GetAll() ([]toolmodel.Agreement, error)
-    Get(id int) (toolmodel.Agreement, error)
+    Get(filters ...map[string]interface{}) ([]toolmodel.Agreement, error)
     Insert(agreement toolmodel.Agreement) error
     Remove(id int) error
 }
@@ -16,7 +15,7 @@ func NewAgreement(name string, nUsers int,
     if name == "" {
         return toolmodel.Agreement{}, fmt.Errorf("Invalid empty name for agreement")
     }
-    agreements, err := repo.GetAll()
+    agreements, err := repo.Get()
     if err != nil {
         return toolmodel.Agreement{}, fmt.Errorf(
             "Error in GetAll() query: %v", err)
@@ -40,17 +39,9 @@ type FakeAgreementRepository struct {
     agreements []toolmodel.Agreement
 }
 
-func (f *FakeAgreementRepository) GetAll() ([]toolmodel.Agreement, error) {
+func (f *FakeAgreementRepository) Get(
+        filters ...map[string]interface{}) ([]toolmodel.Agreement, error) {
     return f.agreements, nil
-}
-
-func (f *FakeAgreementRepository) Get(id int) (toolmodel.Agreement, error) {
-    for _, v := range f.agreements {
-        if v.GetId() == id {
-            return v, nil
-        }
-    }
-    return toolmodel.Agreement{}, fmt.Errorf("No stakeholder for id %v", id)
 }
 
 func (f *FakeAgreementRepository) Insert(

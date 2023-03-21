@@ -66,7 +66,8 @@ func NewCloudPSQLAgreementRepo(
     return repoPtr
 }
 
-func (p *PSQLAgreementRepo) GetAll() ([]toolmodel.Agreement, error) {
+func (p *PSQLAgreementRepo) Get(
+        filters ...map[string]interface{}) ([]toolmodel.Agreement, error) {
     var (
         id                  int
         name                string
@@ -74,15 +75,21 @@ func (p *PSQLAgreementRepo) GetAll() ([]toolmodel.Agreement, error) {
         numMonitoredUsers   int
         pageLimit           int
         agreement           toolmodel.Agreement
+
+        query               string = "agreement_id, agreement_name, "+
+                                     "num_mtz_users, num_monitored_users, "+
+                                     "page_limit FROM agreements "
+        whereClause         string = ""
+        params              []interface{}
     )
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
     data := make([]toolmodel.Agreement, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT agreement_id, agreement_name, " +
-        "num_mtz_users, num_monitored_users, page_limit " +
-        "FROM agreements ")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
-        log.Printf("Error in PSQLAgreementRepo GetAll(): %v", err)
+        log.Printf("Error in PSQLAgreementRepo Get(): %v", err)
         return []toolmodel.Agreement{}, err
     }
 
@@ -93,7 +100,7 @@ func (p *PSQLAgreementRepo) GetAll() ([]toolmodel.Agreement, error) {
                             &numMonitoredUsers,
                             &pageLimit);
         err != nil {
-            log.Printf("Error in PSQLAgreementRepo GetAll(): %v", err)
+            log.Printf("Error in PSQLAgreementRepo Get(): %v", err)
             return []toolmodel.Agreement{}, err
         }
         agreement, _ = toolmodel.NewAgreement(id,
@@ -104,35 +111,6 @@ func (p *PSQLAgreementRepo) GetAll() ([]toolmodel.Agreement, error) {
         data = append(data, agreement)
     }
     return data, nil
-}
-func (p *PSQLAgreementRepo) Get(id int) (toolmodel.Agreement, error) {
-    var (
-        auxId               int
-        name                string
-        numMtzUsers         int
-        numMonitoredUsers   int
-        pageLimit           int
-        agreement           toolmodel.Agreement
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT agreement_id, agreement_name, " +
-        "num_mtz_users, num_monitored_users, page_limit " +
-        "FROM agreements "+
-        "WHERE agreement_id = $1", id).Scan(&auxId,
-                                            &name,
-                                            &numMtzUsers,
-                                            &numMonitoredUsers,
-                                            &pageLimit)
-    if err != nil {
-        log.Printf("Error in PSQLAgreementRepo Get(): %v", err)
-        return toolmodel.Agreement{}, err
-    }
-    agreement, _ = toolmodel.NewAgreement(auxId,
-                                      name,
-                                      numMtzUsers,
-                                      numMonitoredUsers,
-                                      pageLimit)
-    return agreement, nil
 }
 
 func (p *PSQLAgreementRepo) Insert(agreement toolmodel.Agreement) error {
@@ -198,19 +176,25 @@ func NewCloudPSQLModuleRepo(
     return repoPtr
 }
 
-func (p *PSQLModuleRepo) GetAll() ([]toolmodel.Module, error) {
+func (p *PSQLModuleRepo) Get(
+        filters ...map[string]interface{}) ([]toolmodel.Module, error) {
     var (
-        id      int
-        name    string
-        module  toolmodel.Module
+        id          int
+        name        string
+        module      toolmodel.Module
+        query       string = "SELECT module_id, module_name " +
+                             "FROM modules "
+        whereClause string = ""
+        params      []interface{}
     )
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
     data := make([]toolmodel.Module, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT module_id, module_name " +
-        "FROM modules")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
-        log.Printf("Error in PSQLModuleRepo GetAll(): %v", err)
+        log.Printf("Error in PSQLModuleRepo Get(): %v", err)
         return []toolmodel.Module{}, err
     }
 
@@ -218,30 +202,13 @@ func (p *PSQLModuleRepo) GetAll() ([]toolmodel.Module, error) {
         if err := rows.Scan(&id,
                             &name);
         err != nil {
-            log.Printf("Error in PSQLModuleRepo GetAll(): %v", err)
+            log.Printf("Error in PSQLModuleRepo Get(): %v", err)
             return []toolmodel.Module{}, err
         }
         module, _ = toolmodel.NewModule(id, name);
         data = append(data, module)
     }
     return data, nil
-}
-func (p *PSQLModuleRepo) Get(id int) (toolmodel.Module, error) {
-    var (
-        auxId      int
-        name    string
-        module  toolmodel.Module
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT module_id, module_name " +
-        "FROM modules "+
-        "WHERE module_id = $1", id).Scan(&auxId, &name);
-    if err != nil {
-        log.Printf("Error in PSQLModuleRepo Get(): %v", err)
-        return toolmodel.Module{}, err
-    }
-    module, _ = toolmodel.NewModule(auxId, name);
-    return module, nil
 }
 
 func (p *PSQLModuleRepo) Insert(module toolmodel.Module) error {
@@ -333,7 +300,7 @@ func (p *PSQLMtzUserRepo) Get(
     rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
-        log.Printf("Error in PSQLMtzUserRepo GetAll(): %v", err)
+        log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
         return []toolmodel.MtzUser{}, err
     }
 
@@ -349,7 +316,7 @@ func (p *PSQLMtzUserRepo) Get(
                             &publicKey,
                             &privateKey);
         err != nil {
-            log.Printf("Error in PSQLMtzUserRepo GetAll(): %v", err)
+            log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
             return []toolmodel.MtzUser{}, err
         }
         startDate = startDateRaw.Format("2006-01-02")
@@ -458,21 +425,27 @@ func NewCloudPSQLProfileRepo(
     return repoPtr
 }
 
-func (p *PSQLProfileRepo) GetAll() ([]toolmodel.Profile, error) {
+func (p *PSQLProfileRepo) Get(
+        filters ...map[string]interface{}) ([]toolmodel.Profile, error) {
     var (
         id          int
         name        string
         rawSecurity []byte
         security    map[string]bool
-        profile  toolmodel.Profile
+        profile     toolmodel.Profile
+        query       string = "SELECT profile_id, profile_name, security " +
+                             "FROM profiles"
+        whereClause string = ""
+        params      []interface{}
     )
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
     data := make([]toolmodel.Profile, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT profile_id, profile_name, security " +
-        "FROM profiles")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
-        log.Printf("Error in PSQLProfileRepo GetAll(): %v", err)
+        log.Printf("Error in PSQLProfileRepo Get(): %v", err)
         return []toolmodel.Profile{}, err
     }
 
@@ -482,7 +455,7 @@ func (p *PSQLProfileRepo) GetAll() ([]toolmodel.Profile, error) {
                             &rawSecurity);
         err != nil {
             log.Printf("Error iterating through PSQLProfileRepo "+
-                "GetAll(): %v", err)
+                "Get(): %v", err)
             return []toolmodel.Profile{}, err
         }
         json.Unmarshal(rawSecurity, &security)
@@ -490,26 +463,6 @@ func (p *PSQLProfileRepo) GetAll() ([]toolmodel.Profile, error) {
         data = append(data, profile)
     }
     return data, nil
-}
-func (p *PSQLProfileRepo) Get(id int) (toolmodel.Profile, error) {
-    var (
-        auxId       int
-        name        string
-        rawSecurity []byte
-        security    map[string]bool
-        profile  toolmodel.Profile
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT profile_id, profile_name, security " +
-        "FROM profiles "+
-        "WHERE profile_id = $1", id).Scan(&auxId, &name, &rawSecurity);
-    if err != nil {
-        log.Printf("Error in PSQLProfileRepo Get(): %v", err)
-        return toolmodel.Profile{}, err
-    }
-    json.Unmarshal(rawSecurity, security)
-    profile, _ = toolmodel.NewProfile(auxId, name, security);
-    return profile, nil
 }
 
 func (p *PSQLProfileRepo) Insert(profile toolmodel.Profile) error {
@@ -571,20 +524,27 @@ func NewCloudPSQLStakeholderRepo(
     return repoPtr
 }
 
-func (p *PSQLStakeholderRepo) GetAll() ([]toolmodel.Stakeholder, error) {
+func (p *PSQLStakeholderRepo) Get(
+        filters ...map[string]interface{}) ([]toolmodel.Stakeholder, error) {
     var (
         id          int
         name        string
         domainIds   []int
         stakeholder toolmodel.Stakeholder
+        query       string = "SELECT stakeholder_id, "+
+                             "stakeholder_name, domain_ids " +
+                             "FROM stakeholders"
+        whereClause string = ""
+        params      []interface{}
     )
+    if len(filters) > 0 {
+        whereClause, params = parseFilters(filters[0])
+    }
     data := make([]toolmodel.Stakeholder, 0)
-    rows, err := p.DBConn.Query(
-        "SELECT stakeholder_id, stakeholder_name, domain_ids " +
-        "FROM stakeholders")
+    rows, err := p.DBConn.Query(query + whereClause, params...)
 
     if err != nil {
-        log.Printf("Error in PSQLStakeholderRepo GetAll(): %v", err)
+        log.Printf("Error in PSQLStakeholderRepo Get(): %v", err)
         return []toolmodel.Stakeholder{}, err
     }
 
@@ -593,32 +553,13 @@ func (p *PSQLStakeholderRepo) GetAll() ([]toolmodel.Stakeholder, error) {
                             &name,
                             pq.Array(&domainIds));
         err != nil {
-            log.Printf("Error in PSQLStakeholderRepo GetAll(): %v", err)
+            log.Printf("Error in PSQLStakeholderRepo Get(): %v", err)
             return []toolmodel.Stakeholder{}, err
         }
         stakeholder, _ = toolmodel.NewStakeholder(id, name, domainIds);
         data = append(data, stakeholder)
     }
     return data, nil
-}
-func (p *PSQLStakeholderRepo) Get(id int) (toolmodel.Stakeholder, error) {
-    var (
-        auxId       int
-        name        string
-        domainIds   []int
-        stakeholder toolmodel.Stakeholder
-    )
-    err := p.DBConn.QueryRow(
-        "SELECT stakeholder_id, stakeholder_name, domain_ids " +
-        "FROM stakeholders "+
-        "WHERE stakeholder_id = $1", id).Scan(
-            &auxId, &name, pq.Array(&domainIds));
-    if err != nil {
-        log.Printf("Error in PSQLStakeholderRepo Get(): %v", err)
-        return toolmodel.Stakeholder{}, err
-    }
-    stakeholder, _ = toolmodel.NewStakeholder(auxId, name, domainIds);
-    return stakeholder, nil
 }
 
 func (p *PSQLStakeholderRepo) Insert(stakeholder toolmodel.Stakeholder) error {

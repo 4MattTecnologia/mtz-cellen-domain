@@ -5,8 +5,7 @@ import (
 )
 
 type AbsStakeholderRepository interface {
-    GetAll() ([]toolmodel.Stakeholder, error)
-    Get(id int) (toolmodel.Stakeholder, error)
+    Get(filters ...map[string]interface{}) ([]toolmodel.Stakeholder, error)
     Insert(stakeholder toolmodel.Stakeholder) error
     Remove(id int) error
 }
@@ -35,18 +34,11 @@ type FakeStakeholderRepository struct {
     stakeholders []toolmodel.Stakeholder
 }
 
-func (f *FakeStakeholderRepository) GetAll() ([]toolmodel.Stakeholder, error) {
+func (f *FakeStakeholderRepository) Get(
+        filters ...map[string]interface{}) ([]toolmodel.Stakeholder, error) {
     return f.stakeholders, nil
 }
 
-func (f *FakeStakeholderRepository) Get(id int) (toolmodel.Stakeholder, error) {
-    for _, v := range f.stakeholders {
-        if v.GetId() == id {
-            return v, nil
-        }
-    }
-    return toolmodel.Stakeholder{}, fmt.Errorf("No stakeholder for id %v", id)
-}
 func (f *FakeStakeholderRepository) Update(
         id int, stakeholder toolmodel.Stakeholder) error {
     size := len(f.stakeholders)
