@@ -13,7 +13,7 @@ func TestNewAgreement(t *testing.T) {
         t.Fatalf("TestNewAgreement failed: second.GetId() value was set to %v",
                  second.GetId())
     }
-    query, _ := repo.GetAll()
+    query, _ := repo.Get()
     if len(query) != 2 {
         t.Fatalf("TestNewAgreement failed: expected 2 items in repository")
     }
@@ -21,15 +21,15 @@ func TestNewAgreement(t *testing.T) {
 
 func TestNewStakeholder(t *testing.T) {
     repo := &(FakeStakeholderRepository{})
-    first, _ := NewStakeholder("first", repo)
+    first, _ := NewStakeholder("first", []int{0}, repo)
     repo.Insert(first)
-    second, _ := NewStakeholder("second", repo)
+    second, _ := NewStakeholder("second", []int{0}, repo)
     repo.Insert(second)
     if second.GetId() != 1 {
         t.Fatalf("TestNewStakeholder failed: second.GetId() value was set to %v",
                  second.GetId())
     }
-    query, _ := repo.GetAll()
+    query, _ := repo.Get()
     if len(query) != 2 {
         t.Fatalf("TestNewStakeholder failed: expected 2 items in repository")
     }
@@ -42,6 +42,7 @@ func TestNewMtzUser(t *testing.T) {
                            0, 0,
                            "0/0/0", "0/0/0",
                            []byte{}, []byte{},
+                           "/path",
                            repo)
     repo.Insert(first)
     second, _ := NewMtzUser("second",
@@ -49,13 +50,14 @@ func TestNewMtzUser(t *testing.T) {
                             0, 0,
                             "0/0/0", "0/0/0",
                             []byte{}, []byte{},
+                           "/path",
                             repo)
     repo.Insert(second)
     if second.GetId() != 1 {
         t.Fatalf("TestNewMtzUser failed: second.GetId() value was set to %v",
                  second.GetId())
     }
-    query, _ := repo.GetAll()
+    query, _ := repo.Get()
     if len(query) != 2 {
         t.Fatalf("TestNewMtzUser failed: expected 2 items in repository")
     }
@@ -73,7 +75,7 @@ func TestNewProfile(t *testing.T) {
         t.Fatalf("TestNewProfile failed: second.GetId() value was set to %v",
                  second.GetId())
     }
-    query, _ := repo.GetAll()
+    query, _ := repo.Get()
     if len(query) != 2 {
         t.Fatalf("TestNewProfile failed: expected 2 items in repository")
     }

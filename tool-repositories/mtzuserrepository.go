@@ -15,6 +15,7 @@ func NewMtzUser(name string,
                 stakeholderId int, profileId int,
                 startDate string, endDate string,
                 publicKey []byte, privateKey []byte,
+                profilePicPath string,
                 repo AbsMtzUserRepository) (
                     toolmodel.MtzUser, error) {
     if name == "" {
@@ -35,7 +36,8 @@ func NewMtzUser(name string,
                                 password, domainId,
                                 stakeholderId, profileId,
                                 startDate, endDate,
-                                publicKey, privateKey)
+                                publicKey, privateKey,
+                                profilePicPath)
 }
 
 type FakeMtzUserRepository struct {

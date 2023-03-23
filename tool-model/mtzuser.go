@@ -14,13 +14,15 @@ type MtzUser struct {
     endDate         string
     publicKey       []byte
     privateKey      []byte
+    profilePicPath  string
 }
 
 func NewMtzUser(id int, name string,
                 password string, domainId int,
                 stakeholderId int, profileId int,
                 startDate string, endDate string,
-                publicKey []byte, privateKey []byte) (
+                publicKey []byte, privateKey []byte,
+                profilePicPath string) (
                     MtzUser, error) {
     if name == "" {
         return MtzUser{}, fmt.Errorf("Invalid empty name for MtzUser")
@@ -36,7 +38,7 @@ func NewMtzUser(id int, name string,
         password, domainId,
         stakeholderId, profileId,
         startDate, endDate,
-        publicKey, privateKey,
+        publicKey, privateKey, profilePicPath,
     }, nil
 }
 
@@ -69,4 +71,7 @@ func (m *MtzUser) GetPrivateKey() []byte {
 }
 func (m *MtzUser) GetPublicKey() []byte {
     return m.publicKey
+}
+func (m *MtzUser) GetProfilePicPath() string {
+    return m.profilePicPath
 }

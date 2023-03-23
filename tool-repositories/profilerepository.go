@@ -5,7 +5,6 @@ import (
 )
 type AbsProfileRepository interface {
     Get(filters ...map[string]interface{}) ([]toolmodel.Profile, error)
-    Get(id int) (toolmodel.Profile, error)
     Insert(profile toolmodel.Profile) error
     Remove(id int) error
 }
@@ -15,9 +14,9 @@ func NewProfile(name string, security map[string]bool,
     if name == "" {
         return toolmodel.Profile{}, fmt.Errorf("Invalid empty name for profile")
     }
-    profiles, err := repo.GetAll()
+    profiles, err := repo.Get()
     if err != nil {
-        return toolmodel.Profile{}, fmt.Errorf("Error in GetAll() query: %v", err)
+        return toolmodel.Profile{}, fmt.Errorf("Error in Get() query: %v", err)
     }
     maxId := 0
     for _, v := range profiles {

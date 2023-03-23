@@ -185,8 +185,11 @@ func TestToolModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLAgreementRepository failed: " +
             "expected id higher than 0 for second element")
     }
-    gotAgreement, _ := agreementPsql.Get(1)
-    if gotAgreement.GetId() != 1 {
+    filters := map[string]interface{}{
+        "agreement_id": 1,
+    }
+    gotAgreement, _ := agreementPsql.Get(filters)
+    if gotAgreement[0].GetId() != 1 {
         t.Fatalf("TestPSQLAgreementRepository failed: " +
             "expected to fetch element with id = 1")
     }
@@ -194,7 +197,7 @@ func TestToolModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLAgreementRepository failed: %v", err)
     }
-    gotAllAgreements, err := agreementPsql.GetAll()
+    gotAllAgreements, err := agreementPsql.Get()
     if len(gotAllAgreements) != 1 {
         t.Fatalf("TestPSQLAgreementRepository failed: " +
             "expected array of 1 element after removal")
@@ -210,6 +213,7 @@ func TestToolModelPSQLRepositories(t *testing.T) {
         1, 1, 1,
         "2000-01-01", "2000-01-01",
         []byte{}, []byte{},
+        "/path",
         mtzUserPsql)
     if err != nil {
         t.Fatalf("TestPSQLMtzUserRepository failed: %v", err)
@@ -218,7 +222,7 @@ func TestToolModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLMtzUserRepository failed: %v", err)
     }
-    filters := map[string]interface{}{
+    filters = map[string]interface{}{
         "user_name": "first",
         "password": "pwd",
         "domain_id": 1,
@@ -232,6 +236,7 @@ func TestToolModelPSQLRepositories(t *testing.T) {
         1, 1, 1,
         "2000-01-01", "2000-01-01",
         []byte{}, []byte{},
+        "/path",
         mtzUserPsql)
     if err != nil {
         t.Fatalf("TestPSQLMtzUserRepository failed: %v", err)
@@ -291,8 +296,11 @@ func TestToolModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLStakeholderRepository failed: " +
             "expected id higher than 0 for second element")
     }
-    gotStakeholder, _ := stakeholderPsql.Get(1)
-    if gotStakeholder.GetId() != 1 {
+    filters = map[string]interface{}{
+        "stakeholder_id": 1,
+    }
+    gotStakeholder, _ := stakeholderPsql.Get(filters)
+    if gotStakeholder[0].GetId() != 1 {
         t.Fatalf("TestPSQLStakeholderRepository failed: " +
             "expected to fetch element with id = 1")
     }
@@ -300,7 +308,7 @@ func TestToolModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLStakeholderRepository failed: %v", err)
     }
-    gotAllStakeholders, err := stakeholderPsql.GetAll()
+    gotAllStakeholders, err := stakeholderPsql.Get()
     if len(gotAllStakeholders) != 1 {
         t.Fatalf("TestPSQLStakeholderRepository failed: " +
             "expected array of 1 element after removal")
@@ -334,11 +342,14 @@ func TestToolModelPSQLRepositories(t *testing.T) {
         t.Fatalf("TestPSQLProfileRepository failed: " +
             "expected id higher than 0 for second element")
     }
-    gotProfile, err := profilePsql.Get(1)
+    filters = map[string]interface{}{
+        "profile_id": 1,
+    }
+    gotProfile, err := profilePsql.Get(filters)
     if err != nil {
         t.Fatalf("TestPSQLProfileRepository failed: %v", err)
     }
-    if gotProfile.GetId() != 1 {
+    if gotProfile[0].GetId() != 1 {
         t.Fatalf("TestPSQLProfileRepository failed: " +
             "expected to fetch element with id = 1")
     }
@@ -346,7 +357,7 @@ func TestToolModelPSQLRepositories(t *testing.T) {
     if err != nil {
         t.Fatalf("TestPSQLProfileRepository failed: %v", err)
     }
-    gotAllProfiles, err := profilePsql.GetAll()
+    gotAllProfiles, err := profilePsql.Get()
     if len(gotAllProfiles) != 1 {
         t.Fatalf("TestPSQLProfileRepository failed: " +
             "expected array of 1 element after removal")

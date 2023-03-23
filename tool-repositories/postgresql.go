@@ -76,7 +76,7 @@ func (p *PSQLAgreementRepo) Get(
         pageLimit           int
         agreement           toolmodel.Agreement
 
-        query               string = "agreement_id, agreement_name, "+
+        query               string = "SELECT agreement_id, agreement_name, "+
                                      "num_mtz_users, num_monitored_users, "+
                                      "page_limit FROM agreements "
         whereClause         string = ""
@@ -281,6 +281,7 @@ func (p *PSQLMtzUserRepo) Get(
         endDate         string
         publicKey       []byte
         privateKey      []byte
+        profilePic      string
         mtzUser         toolmodel.MtzUser
 
         query           string = "SELECT user_id, user_name, " +
@@ -288,7 +289,7 @@ func (p *PSQLMtzUserRepo) Get(
                                  "domain_id, stakeholder_id, "+
                                  "profile_id, "+
                                  "start_date, end_date, "+
-                                 "public_key, private_key "+
+                                 "public_key, private_key, profile_pic_path "+
                                  "FROM mtz_users "
         whereClause     string = ""
         params          []interface{}
@@ -314,7 +315,8 @@ func (p *PSQLMtzUserRepo) Get(
                             &startDateRaw,
                             &endDateRaw,
                             &publicKey,
-                            &privateKey);
+                            &privateKey,
+                            &profilePic);
         err != nil {
             log.Printf("Error in PSQLMtzUserRepo Get(): %v", err)
             return []toolmodel.MtzUser{}, err
@@ -330,7 +332,8 @@ func (p *PSQLMtzUserRepo) Get(
                                           startDate,
                                           endDate,
                                           publicKey,
-                                          privateKey);
+                                          privateKey,
+                                          profilePic);
         data = append(data, mtzUser)
     }
     return data, nil
@@ -348,6 +351,7 @@ func (p *PSQLMtzUserRepo) Insert(mtzUser toolmodel.MtzUser) error {
         endDate         string
         publicKey       []byte
         privateKey      []byte
+        profilePic      string
     )
     id              = mtzUser.GetId()
     name            = mtzUser.GetName()
@@ -359,6 +363,7 @@ func (p *PSQLMtzUserRepo) Insert(mtzUser toolmodel.MtzUser) error {
     endDate         = mtzUser.GetEndDate()
     publicKey       = mtzUser.GetPublicKey()
     privateKey      = mtzUser.GetPrivateKey()
+    profilePic      = mtzUser.GetProfilePicPath()
     startDateRaw, err := time.Parse("2006-01-02", startDate)
     if err != nil {
         return err
@@ -374,14 +379,15 @@ func (p *PSQLMtzUserRepo) Insert(mtzUser toolmodel.MtzUser) error {
         "domain_id, stakeholder_id, " +
         "profile_id, " +
         "start_date, end_date, " +
-        "public_key, private_key) " +
-        "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+        "public_key, private_key, profile_pic_path) " +
+        "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
         id, name,
         password,
         domainId, stakeholderId,
         profileId,
         startDateRaw, endDateRaw,
-        publicKey, privateKey)
+        publicKey, privateKey,
+        profilePic)
     return err
 }
 
@@ -434,7 +440,7 @@ func (p *PSQLProfileRepo) Get(
         security    map[string]bool
         profile     toolmodel.Profile
         query       string = "SELECT profile_id, profile_name, security " +
-                             "FROM profiles"
+                             "FROM profiles "
         whereClause string = ""
         params      []interface{}
     )
@@ -533,7 +539,7 @@ func (p *PSQLStakeholderRepo) Get(
         stakeholder toolmodel.Stakeholder
         query       string = "SELECT stakeholder_id, "+
                              "stakeholder_name, domain_ids " +
-                             "FROM stakeholders"
+                             "FROM stakeholders "
         whereClause string = ""
         params      []interface{}
     )

@@ -18,7 +18,7 @@ func NewAgreement(name string, nUsers int,
     agreements, err := repo.Get()
     if err != nil {
         return toolmodel.Agreement{}, fmt.Errorf(
-            "Error in GetAll() query: %v", err)
+            "Error in Get() query: %v", err)
     }
     maxId := 0
     for _, v := range agreements {

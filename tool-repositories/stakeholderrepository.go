@@ -17,9 +17,9 @@ func NewStakeholder(name string, domainIds []int,
     if name == "" {
         return toolmodel.Stakeholder{}, fmt.Errorf("Invalid empty name for stakeholder")
     }
-    stakeholders, err := repo.GetAll()
+    stakeholders, err := repo.Get()
     if err != nil {
-        return toolmodel.Stakeholder{}, fmt.Errorf("Error in GetAll() query")
+        return toolmodel.Stakeholder{}, fmt.Errorf("Error in Get() query")
     }
     maxId := 0
     for _, v := range stakeholders {
