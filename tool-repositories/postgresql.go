@@ -289,7 +289,7 @@ func (p *PSQLMtzUserRepo) Get(
                                  "domain_id, stakeholder_id, "+
                                  "profile_id, "+
                                  "start_date, end_date, "+
-                                 "public_key, private_key, profile_pic_path "+
+                                 "public_key, private_key, profile_picture_path "+
                                  "FROM mtz_users "
         whereClause     string = ""
         params          []interface{}
@@ -379,7 +379,7 @@ func (p *PSQLMtzUserRepo) Insert(mtzUser toolmodel.MtzUser) error {
         "domain_id, stakeholder_id, " +
         "profile_id, " +
         "start_date, end_date, " +
-        "public_key, private_key, profile_pic_path) " +
+        "public_key, private_key, profile_picture_path) " +
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
         id, name,
         password,

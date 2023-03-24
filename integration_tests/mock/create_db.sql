@@ -48,5 +48,5 @@ create table mtz_users (
     end_date date,
     private_key bytea,
     public_key bytea,
-    profile_pic_path varchar(64)
+    profile_picture_path varchar(64)
 );
