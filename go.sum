@@ -385,8 +385,8 @@ cloud.google.com/go/workflows v1.7.0/go.mod h1:JhSrZuVZWuiDfKEFxU0/F1PQjmpnpcoIS
 cloud.google.com/go/workflows v1.8.0/go.mod h1:ysGhmEajwZxGn1OhGOGKsTXc5PyxOc0vfKf5Af+to4M=
 cloud.google.com/go/workflows v1.9.0/go.mod h1:ZGkj1aFIOd9c8Gerkjjq7OW7I5+l6cSvT3ujaO/WwSA=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
-github.com/4MattTecnologia/mtz-cellen-helpers v0.0.0-20230313172955-3b904d98c88b h1:1qSr3IVM7L2vc7Jv063ERvSHd10OhmmoPvq55z4g8H8=
-github.com/4MattTecnologia/mtz-cellen-helpers v0.0.0-20230313172955-3b904d98c88b/go.mod h1:bPxM1Emro6gsdv3J9jB+Sx+sjoYPB82h9/mNLdsCP9s=
+github.com/4MattTecnologia/mtz-cellen-helpers v0.0.0-20230414112652-5f85e35e07fb h1:7Y7eCJco2NEMYyeQyiyPjFEDbhefkv27HaXwaeNbflI=
+github.com/4MattTecnologia/mtz-cellen-helpers v0.0.0-20230414112652-5f85e35e07fb/go.mod h1:bPxM1Emro6gsdv3J9jB+Sx+sjoYPB82h9/mNLdsCP9s=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v1.0.0/go.mod h1:uGG2W01BaETf0Ozp+QxxKJdMBNRWPdstHG0Fmdwn1/U=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v1.1.2/go.mod h1:uGG2W01BaETf0Ozp+QxxKJdMBNRWPdstHG0Fmdwn1/U=
 github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.1.0/go.mod h1:bhXu1AjYL+wutSL/kpSq6s7733q2Rb0yuot9Zgfqa/0=

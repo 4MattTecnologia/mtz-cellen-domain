@@ -3,7 +3,7 @@ module github.com/4MattTecnologia/mtz-cellen-domain
 go 1.19
 
 require (
-	github.com/4MattTecnologia/mtz-cellen-helpers v0.0.0-20230313172955-3b904d98c88b
+	github.com/4MattTecnologia/mtz-cellen-helpers v0.0.0-20230414112652-5f85e35e07fb
 	github.com/lib/pq v1.10.7
 )
 
