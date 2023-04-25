@@ -11,7 +11,7 @@ type AbsOriginInstanceRepository interface {
 }
 
 func NewOriginInstance(name string, connValues model.ConnectionValues,
-                       domainId int, originId int,
+                       domainId int, originId int, status bool,
                        oInstanceRepo AbsOriginInstanceRepository,
                        domainRepo AbsDomainRepository,
                        originRepo AbsOriginRepository) (model.OriginInstance, error) {

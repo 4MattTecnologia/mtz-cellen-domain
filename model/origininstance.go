@@ -87,7 +87,8 @@ func AssertConnectionInfo(connValues ConnectionValues,
 func NewOriginInstance(id int, name string,
                        originId int,
                        domainId int,
-                       connV ConnectionValues) (OriginInstance, error) {
+                       connV ConnectionValues,
+                       status bool) (OriginInstance, error) {
     if name == "" {
         return OriginInstance{}, fmt.Errorf(
             "Invalid empty name for origin instance")
@@ -96,5 +97,5 @@ func NewOriginInstance(id int, name string,
 //        return OriginInstance{}, fmt.Errorf(
 //            "Error creating origin instance: wrong format for connection values")
 //    }
-    return OriginInstance{id, name, originId, domainId, connV}, nil
+    return OriginInstance{id, name, originId, domainId, connV, status}, nil
 }
