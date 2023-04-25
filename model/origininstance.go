@@ -13,6 +13,7 @@ type OriginInstance struct {
     originId            int
     domainId            int
     connectionValues    ConnectionValues
+    status              bool
     // Optional:
 //    executionSettings   ExecutionSettings
 }
@@ -24,12 +25,14 @@ func (o *OriginInstance) MarshalJSON() ([]byte, error) {
         OriginId    int                 `json:"origin_id"`
         DomainId    int                 `json:"domain_id"`
         ConnVals    ConnectionValues    `json:"connection_values"`
+        Status      bool                `json:"life_status"`
     }{
         Id:         o.id,
         Name:       o.name,
         OriginId:   o.originId,
         DomainId:   o.domainId,
         ConnVals:   o.connectionValues,
+        Status:     o.status
     }
     return json.Marshal(mirror)
 }
@@ -52,6 +55,10 @@ func (o *OriginInstance) GetDomainId() int {
 
 func (o *OriginInstance) GetConnectionValues() ConnectionValues {
     return o.connectionValues
+}
+
+func (o *OriginInstance) GetStatus() bool {
+    return o.status
 }
 
 func present(key string, list []string) bool {
