@@ -311,13 +311,14 @@ func (p *PSQLOriginInstanceRepo) Get(
         name            string
         originId        int
         domainId        int
+        status          bool
         cValsRaw        []byte
         connectionVals  model.ConnectionValues
         oInstance       model.OriginInstance
 
         query           string = "SELECT origin_instance_id, "+
                                  "origin_instance_name, "+
-                                 "origin_id, domain_id, " +
+                                 "origin_id, domain_id, life_status, " +
                                  "connection_values " +
                                  "FROM origin_instances "
         whereClause     string = ""
@@ -337,7 +338,7 @@ func (p *PSQLOriginInstanceRepo) Get(
     }
 
     for rows.Next() {
-        if err := rows.Scan(&id, &name, &originId, &domainId, &cValsRaw);
+        if err := rows.Scan(&id, &name, &originId, &domainId, &status, &cValsRaw);
         err != nil {
             log.Printf("Error in PSQLOriginInstanceRepo Get(): %v", err)
             return []model.OriginInstance{}, err
@@ -348,7 +349,7 @@ func (p *PSQLOriginInstanceRepo) Get(
             return []model.OriginInstance{}, err
         }
         oInstance, _ = model.NewOriginInstance(id, name, originId,
-                                            domainId, connectionVals)
+                                            domainId, connectionVals, status)
         data = append(data, oInstance)
     }
     return data, nil
