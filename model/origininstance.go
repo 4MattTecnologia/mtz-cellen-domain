@@ -32,7 +32,7 @@ func (o *OriginInstance) MarshalJSON() ([]byte, error) {
         OriginId:   o.originId,
         DomainId:   o.domainId,
         ConnVals:   o.connectionValues,
-        Status:     o.status
+        Status:     o.status,
     }
     return json.Marshal(mirror)
 }
