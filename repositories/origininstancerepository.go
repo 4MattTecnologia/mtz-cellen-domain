@@ -42,7 +42,7 @@ func NewOriginInstance(name string, connValues model.ConnectionValues,
     }
 
     return model.NewOriginInstance(maxId, name, originId,
-                                   domainId, connValues)
+                                   domainId, connValues, status)
 }
 
 type FakeOriginInstanceRepository struct {

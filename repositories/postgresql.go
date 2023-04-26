@@ -392,6 +392,7 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
         name        string
         originId    int
         domainId    int
+        status      bool
         cValsRaw    []byte
         cVals       model.ConnectionValues
     )
@@ -399,6 +400,7 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
     name        = oInstance.GetName()
     originId    = oInstance.GetOriginId()
     domainId    = oInstance.GetDomainId()
+    status      = oInstance.GetStatus()
     cVals       = oInstance.GetConnectionValues()
     cValsRaw, err := json.Marshal(cVals)
     if err != nil {
@@ -408,9 +410,9 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
     _, err = p.DBConn.Exec(
         "INSERT INTO origin_instances "+
         "(origin_instance_id, origin_instance_name, " +
-        "origin_id, domain_id, connection_values) "+
+        "origin_id, domain_id, life_status, connection_values) "+
         "VALUES ($1, $2, $3, $4, $5)",
-        id, name, originId, domainId, cValsRaw)
+        id, name, originId, domainId, status, cValsRaw)
     return err
 }
 
