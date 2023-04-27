@@ -214,7 +214,7 @@ func (p *PSQLOriginRepo) Get(
         }
         origin, _ = model.NewOrigin(id, name, connectionInfo)
         data = append(data, origin)
-        connection_info = nil
+        connectionInfo = make(map[string]string)
     }
     return data, nil
 }
