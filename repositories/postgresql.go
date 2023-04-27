@@ -201,7 +201,6 @@ func (p *PSQLOriginRepo) Get(
         log.Printf("Error in PSQLOriginRepo Get(): %v", err)
         return []model.Origin{}, err
     }
-    fmt.Println(rows)
     for rows.Next() {
         if err := rows.Scan(&id, &name, &cInfoRaw);
         err != nil {
@@ -213,10 +212,11 @@ func (p *PSQLOriginRepo) Get(
             log.Printf("Error in PSQLOriginRepo Get(): %v", err)
             return []model.Origin{}, err
         }
+        fmt.Println(&connectionInfo)
         origin, _ = model.NewOrigin(id, name, connectionInfo)
         data = append(data, origin)
+        fmt.Println(data)
     }
-    fmt.Println(data)
     return data, nil
 }
 //func (p *PSQLOriginRepo) Get(id int) (model.Origin, error) {

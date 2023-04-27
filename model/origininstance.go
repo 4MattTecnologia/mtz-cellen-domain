@@ -98,5 +98,6 @@ func NewOriginInstance(id int, name string,
 //        return OriginInstance{}, fmt.Errorf(
 //            "Error creating origin instance: wrong format for connection values")
 //    }
+    fmt.Println(&connV)
     return OriginInstance{id, name, originId, domainId, connV, status}, nil
 }
