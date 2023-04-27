@@ -6,7 +6,6 @@ import (
     helperDb "github.com/4MattTecnologia/mtz-cellen-helpers/database"
     "github.com/4MattTecnologia/mtz-cellen-domain/model"
     _ "github.com/lib/pq"
-    "log"
 )
 
 // PSQL repositores for all entities in the domain modelling.
@@ -201,7 +200,7 @@ func (p *PSQLOriginRepo) Get(
         log.Printf("Error in PSQLOriginRepo Get(): %v", err)
         return []model.Origin{}, err
     }
-    log.Println(rows)
+    log.Printf(rows)
     for rows.Next() {
         if err := rows.Scan(&id, &name, &cInfoRaw);
         err != nil {
@@ -213,10 +212,10 @@ func (p *PSQLOriginRepo) Get(
             log.Printf("Error in PSQLOriginRepo Get(): %v", err)
             return []model.Origin{}, err
         }
-        log.Println(connectionInfo)
+        log.Printf(connectionInfo)
         origin, _ = model.NewOrigin(id, name, connectionInfo)
         data = append(data, origin)
-        log.Println(origin)
+        log.Printf(origin)
     }
     return data, nil
 }
@@ -415,7 +414,7 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
         "INSERT INTO origin_instances "+
         "(origin_instance_id, origin_instance_name, " +
         "origin_id, domain_id, life_status, connection_values) "+
-        "VALUES ($1, $2, $3, $4, $5)",
+        "VALUES ($1, $2, $3, $4, $5, $6)",
         id, name, originId, domainId, status, cValsRaw)
     return err
 }
