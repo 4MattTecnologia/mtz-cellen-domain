@@ -216,7 +216,7 @@ func (p *PSQLOriginRepo) Get(
         origin, _ = model.NewOrigin(id, name, connectionInfo)
         data = append(data, origin)
     }
-    ftm.Println(data)
+    fmt.Println(data)
     return data, nil
 }
 //func (p *PSQLOriginRepo) Get(id int) (model.Origin, error) {
