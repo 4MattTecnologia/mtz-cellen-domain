@@ -6,7 +6,6 @@ import (
     helperDb "github.com/4MattTecnologia/mtz-cellen-helpers/database"
     "github.com/4MattTecnologia/mtz-cellen-domain/model"
     _ "github.com/lib/pq"
-    "fmt"
 )
 
 // PSQL repositores for all entities in the domain modelling.
