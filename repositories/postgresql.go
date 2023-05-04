@@ -1,3 +1,4 @@
+
 package repositories
 import (
     "encoding/json"
@@ -312,6 +313,7 @@ func (p *PSQLOriginInstanceRepo) Get(
         originId        int
         domainId        int
         status          bool
+        deleted         bool
         cValsRaw        []byte
         connectionVals  model.ConnectionValues
         oInstance       model.OriginInstance
@@ -319,7 +321,8 @@ func (p *PSQLOriginInstanceRepo) Get(
         query           string = "SELECT origin_instance_id, "+
                                  "origin_instance_name, "+
                                  "origin_id, domain_id, life_status, " +
-                                 "connection_values " +
+                                 "connection_values, " +
+                                 "deleted " +
                                  "FROM origin_instances "
         whereClause     string = ""
         params          []interface{}
@@ -338,7 +341,7 @@ func (p *PSQLOriginInstanceRepo) Get(
     }
 
     for rows.Next() {
-        if err := rows.Scan(&id, &name, &originId, &domainId, &status, &cValsRaw);
+        if err := rows.Scan(&id, &name, &originId, &domainId, &status, &cValsRaw, &deleted);
         err != nil {
             log.Printf("Error in PSQLOriginInstanceRepo Get(): %v", err)
             return []model.OriginInstance{}, err
@@ -349,7 +352,7 @@ func (p *PSQLOriginInstanceRepo) Get(
             return []model.OriginInstance{}, err
         }
         oInstance, _ = model.NewOriginInstance(id, name, originId,
-                                            domainId, connectionVals, status)
+                                            domainId, connectionVals, status, deleted)
         data = append(data, oInstance)
     }
     return data, nil
@@ -395,10 +398,12 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
         domainId    int
         status      bool
         cValsRaw    []byte
+        deleted     bool
         cVals       model.ConnectionValues
     )
     id          = oInstance.GetId()
     name        = oInstance.GetName()
+    deleted     = oInstance.GetDeleted()
     originId    = oInstance.GetOriginId()
     domainId    = oInstance.GetDomainId()
     status      = oInstance.GetStatus()
@@ -411,9 +416,9 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
     _, err = p.DBConn.Exec(
         "INSERT INTO origin_instances "+
         "(origin_instance_id, origin_instance_name, " +
-        "origin_id, domain_id, life_status, connection_values) "+
-        "VALUES ($1, $2, $3, $4, $5, $6)",
-        id, name, originId, domainId, status, cValsRaw)
+        "origin_id, domain_id, life_status, connection_values, deleted) "+
+        "VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        id, name, originId, domainId, status, cValsRaw, deleted)
     return err
 }
 

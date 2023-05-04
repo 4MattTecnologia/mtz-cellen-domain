@@ -14,6 +14,7 @@ type OriginInstance struct {
     domainId            int
     connectionValues    ConnectionValues
     status              bool
+    deleted             bool 
     // Optional:
 //    executionSettings   ExecutionSettings
 }
@@ -26,6 +27,7 @@ func (o *OriginInstance) MarshalJSON() ([]byte, error) {
         DomainId    int                 `json:"domain_id"`
         ConnVals    ConnectionValues    `json:"connection_values"`
         Status      bool                `json:"life_status"`
+        Deleted     bool                `json:"deleted"`
     }{
         Id:         o.id,
         Name:       o.name,
@@ -33,7 +35,7 @@ func (o *OriginInstance) MarshalJSON() ([]byte, error) {
         DomainId:   o.domainId,
         ConnVals:   o.connectionValues,
         Status:     o.status,
-        
+        Deleted:    o.deleted,
     }
     return json.Marshal(mirror)
 }
@@ -60,6 +62,10 @@ func (o *OriginInstance) GetConnectionValues() ConnectionValues {
 
 func (o *OriginInstance) GetStatus() bool {
     return o.status
+}
+
+func (o *OriginInstance) GetDeleted() bool{
+    return o.deleted
 }
 
 func present(key string, list []string) bool {
@@ -89,7 +95,8 @@ func NewOriginInstance(id int, name string,
                        originId int,
                        domainId int,
                        connV ConnectionValues,
-                       status bool) (OriginInstance, error) {
+                       status bool,
+                       deleted bool) (OriginInstance, error) {
     if name == "" {
         return OriginInstance{}, fmt.Errorf(
             "Invalid empty name for origin instance")
@@ -98,5 +105,5 @@ func NewOriginInstance(id int, name string,
 //        return OriginInstance{}, fmt.Errorf(
 //            "Error creating origin instance: wrong format for connection values")
 //    }
-    return OriginInstance{id, name, originId, domainId, connV, status}, nil
+    return OriginInstance{id, name, originId, domainId, connV, status, deleted}, nil
 }
