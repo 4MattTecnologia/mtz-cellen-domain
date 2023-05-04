@@ -428,3 +428,12 @@ func (p *PSQLOriginInstanceRepo) Remove(id int) error {
         "WHERE origin_instance_id = $1", id)
     return err
 }
+
+func(p *PSQLOriginInstanceRepo) Update(origin_instance_id int) error{
+    _, err := p.DBConn.Exec(
+        "update origin_instances set deleted = true where origin_instance_id = $1",
+        origin_instance_id
+        
+    )
+    return err
+}
