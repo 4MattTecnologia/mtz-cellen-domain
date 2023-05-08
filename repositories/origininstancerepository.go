@@ -8,7 +8,7 @@ type AbsOriginInstanceRepository interface {
     Get(filters ...map[string]interface{}) ([]model.OriginInstance, error)
     Insert(oInstance model.OriginInstance) error
     Remove(id int) error
-    Update(id int) error
+    Update(id int, columns_update ...map[string]interface{}) error
 }
 
 func NewOriginInstance(name string, connValues model.ConnectionValues,
