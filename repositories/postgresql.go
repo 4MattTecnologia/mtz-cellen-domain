@@ -330,7 +330,7 @@ func (p *PSQLOriginInstanceRepo) Get(
         originId        int
         domainId        int
         status          bool
-        enable          bool
+        enabled         bool
         cValsRaw        []byte
         connectionVals  model.ConnectionValues
         oInstance       model.OriginInstance
@@ -339,7 +339,7 @@ func (p *PSQLOriginInstanceRepo) Get(
                                  "origin_instance_name, "+
                                  "origin_id, domain_id, life_status, " +
                                  "connection_values, " +
-                                 "enable " +
+                                 "enabled " +
                                  "FROM origin_instances "
         whereClause     string = ""
         params          []interface{}
@@ -358,7 +358,7 @@ func (p *PSQLOriginInstanceRepo) Get(
     }
 
     for rows.Next() {
-        if err := rows.Scan(&id, &name, &originId, &domainId, &status, &cValsRaw, &enable);
+        if err := rows.Scan(&id, &name, &originId, &domainId, &status, &cValsRaw, &enabled);
         err != nil {
             log.Printf("Error in PSQLOriginInstanceRepo Get(): %v", err)
             return []model.OriginInstance{}, err
@@ -369,7 +369,7 @@ func (p *PSQLOriginInstanceRepo) Get(
             return []model.OriginInstance{}, err
         }
         oInstance, _ = model.NewOriginInstance(id, name, originId,
-                                            domainId, connectionVals, status, enable)
+                                            domainId, connectionVals, status, enabled)
         data = append(data, oInstance)
     }
     return data, nil
@@ -415,12 +415,12 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
         domainId    int
         status      bool
         cValsRaw    []byte
-        enable     bool
+        enabled     bool
         cVals       model.ConnectionValues
     )
     id          = oInstance.GetId()
     name        = oInstance.GetName()
-    enable      = oInstance.GetEnable()
+    enabled      = oInstance.GetEnabled()
     originId    = oInstance.GetOriginId()
     domainId    = oInstance.GetDomainId()
     status      = oInstance.GetStatus()
@@ -433,9 +433,9 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
     _, err = p.DBConn.Exec(
         "INSERT INTO origin_instances "+
         "(origin_instance_id, origin_instance_name, " +
-        "origin_id, domain_id, life_status, connection_values, enable) "+
+        "origin_id, domain_id, life_status, connection_values, enabled) "+
         "VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        id, name, originId, domainId, status, cValsRaw, enable)
+        id, name, originId, domainId, status, cValsRaw, enabled)
     return err
 }
 

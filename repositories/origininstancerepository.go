@@ -12,7 +12,7 @@ type AbsOriginInstanceRepository interface {
 }
 
 func NewOriginInstance(name string, connValues model.ConnectionValues,
-                       domainId int, originId int, status bool, enable bool,
+                       domainId int, originId int, status bool, enabled bool,
                        oInstanceRepo AbsOriginInstanceRepository,
                        domainRepo AbsDomainRepository,
                        originRepo AbsOriginRepository) (model.OriginInstance, error) {
@@ -43,7 +43,7 @@ func NewOriginInstance(name string, connValues model.ConnectionValues,
     }
 
     return model.NewOriginInstance(maxId, name, originId,
-                                   domainId, connValues, status, enable)
+                                   domainId, connValues, status, enabled)
 }
 
 type FakeOriginInstanceRepository struct {
