@@ -447,9 +447,8 @@ func (p *PSQLOriginInstanceRepo) Remove(id int) error {
 }
 
 func(p *PSQLOriginInstanceRepo) Update(origin_instance_id int, columns_update ...map[string]interface{}) error{
-    if len(columns_update) > 0 {
-        setClause, params := parseUpdate(columns_update[0], origin_instance_id)
-    }
+    
+    setClause, params := parseUpdate(columns_update[0], origin_instance_id)
     query := "update origin_instances "
 
     _, err := p.DBConn.Exec(query + setClause, params...)
