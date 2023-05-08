@@ -14,7 +14,7 @@ type OriginInstance struct {
     domainId            int
     connectionValues    ConnectionValues
     status              bool
-    deleted             bool 
+    enable              bool 
     // Optional:
 //    executionSettings   ExecutionSettings
 }
@@ -27,7 +27,7 @@ func (o *OriginInstance) MarshalJSON() ([]byte, error) {
         DomainId    int                 `json:"domain_id"`
         ConnVals    ConnectionValues    `json:"connection_values"`
         Status      bool                `json:"life_status"`
-        Deleted     bool                `json:"deleted"`
+        Enable      bool                `json:"enable"`
     }{
         Id:         o.id,
         Name:       o.name,
@@ -35,7 +35,7 @@ func (o *OriginInstance) MarshalJSON() ([]byte, error) {
         DomainId:   o.domainId,
         ConnVals:   o.connectionValues,
         Status:     o.status,
-        Deleted:    o.deleted,
+        Enable:     o.enable,
     }
     return json.Marshal(mirror)
 }
@@ -64,8 +64,8 @@ func (o *OriginInstance) GetStatus() bool {
     return o.status
 }
 
-func (o *OriginInstance) GetDeleted() bool{
-    return o.deleted
+func (o *OriginInstance) GetEnable() bool{
+    return o.enable
 }
 
 func present(key string, list []string) bool {
@@ -96,7 +96,7 @@ func NewOriginInstance(id int, name string,
                        domainId int,
                        connV ConnectionValues,
                        status bool,
-                       deleted bool) (OriginInstance, error) {
+                       enable bool) (OriginInstance, error) {
     if name == "" {
         return OriginInstance{}, fmt.Errorf(
             "Invalid empty name for origin instance")
@@ -105,5 +105,5 @@ func NewOriginInstance(id int, name string,
 //        return OriginInstance{}, fmt.Errorf(
 //            "Error creating origin instance: wrong format for connection values")
 //    }
-    return OriginInstance{id, name, originId, domainId, connV, status, deleted}, nil
+    return OriginInstance{id, name, originId, domainId, connV, status, enable}, nil
 }

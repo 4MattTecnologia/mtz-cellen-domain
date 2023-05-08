@@ -33,6 +33,23 @@ func parseFilters(filters map[string]interface{}) (string, []interface{}) {
     return whereClause, params
 }
 
+func parseUpdate(columns map[string]interface{}, origin_instance_id int) (string, []interface{}) {
+    counter := 1
+    setClause := "SET "
+    params := make([]interface{}, 0)
+    for k, v := range(columns) {
+        if counter > 1 {
+            setClause += ", "
+        }
+        setClause = setClause + k + "= $" +
+                      strconv.Itoa(counter)
+        counter += 1
+        params = append(params, v)
+    }
+    setClause = setClause + " where origin_instance_id = $" + strconv.Itoa(counter)
+    params = append(params, origin_instance_id)
+    return setClause, params
+}
 
 // DOMAIN ----------------------------------------------------------------------
 type PSQLDomainRepo struct {
@@ -313,7 +330,7 @@ func (p *PSQLOriginInstanceRepo) Get(
         originId        int
         domainId        int
         status          bool
-        deleted         bool
+        enable          bool
         cValsRaw        []byte
         connectionVals  model.ConnectionValues
         oInstance       model.OriginInstance
@@ -322,7 +339,7 @@ func (p *PSQLOriginInstanceRepo) Get(
                                  "origin_instance_name, "+
                                  "origin_id, domain_id, life_status, " +
                                  "connection_values, " +
-                                 "deleted " +
+                                 "enable " +
                                  "FROM origin_instances "
         whereClause     string = ""
         params          []interface{}
@@ -341,7 +358,7 @@ func (p *PSQLOriginInstanceRepo) Get(
     }
 
     for rows.Next() {
-        if err := rows.Scan(&id, &name, &originId, &domainId, &status, &cValsRaw, &deleted);
+        if err := rows.Scan(&id, &name, &originId, &domainId, &status, &cValsRaw, &enable);
         err != nil {
             log.Printf("Error in PSQLOriginInstanceRepo Get(): %v", err)
             return []model.OriginInstance{}, err
@@ -352,7 +369,7 @@ func (p *PSQLOriginInstanceRepo) Get(
             return []model.OriginInstance{}, err
         }
         oInstance, _ = model.NewOriginInstance(id, name, originId,
-                                            domainId, connectionVals, status, deleted)
+                                            domainId, connectionVals, status, enable)
         data = append(data, oInstance)
     }
     return data, nil
@@ -398,12 +415,12 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
         domainId    int
         status      bool
         cValsRaw    []byte
-        deleted     bool
+        enable     bool
         cVals       model.ConnectionValues
     )
     id          = oInstance.GetId()
     name        = oInstance.GetName()
-    deleted     = oInstance.GetDeleted()
+    enable      = oInstance.GetEnable()
     originId    = oInstance.GetOriginId()
     domainId    = oInstance.GetDomainId()
     status      = oInstance.GetStatus()
@@ -416,9 +433,9 @@ func (p *PSQLOriginInstanceRepo) Insert(oInstance model.OriginInstance) error {
     _, err = p.DBConn.Exec(
         "INSERT INTO origin_instances "+
         "(origin_instance_id, origin_instance_name, " +
-        "origin_id, domain_id, life_status, connection_values, deleted) "+
+        "origin_id, domain_id, life_status, connection_values, enable) "+
         "VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        id, name, originId, domainId, status, cValsRaw, deleted)
+        id, name, originId, domainId, status, cValsRaw, enable)
     return err
 }
 
@@ -429,9 +446,12 @@ func (p *PSQLOriginInstanceRepo) Remove(id int) error {
     return err
 }
 
-func(p *PSQLOriginInstanceRepo) Update(origin_instance_id int) error{
-    _, err := p.DBConn.Exec(
-        "update origin_instances set deleted = true where origin_instance_id = $1",
-        origin_instance_id)
+func(p *PSQLOriginInstanceRepo) Update(origin_instance_id int, columns_update ...map[string]interface{}) error{
+    if len(columns_update) > 0 {
+        setClause, params := parseUpdate(columns_update[0], origin_instance_id)
+    }
+    query := "update origin_instances "
+
+    _, err := p.DBConn.Exec(query + setClause, params...)
     return err
 }
