@@ -371,7 +371,7 @@ func (p *PSQLOriginInstanceRepo) Get(
         oInstance, _ = model.NewOriginInstance(id, name, originId,
                                             domainId, connectionVals, status, enabled)
         data = append(data, oInstance)
-        connectionVals = make(map[string]string)
+        connectionVals = nil
     }
     return data, nil
 }
